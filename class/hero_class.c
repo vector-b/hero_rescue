@@ -75,12 +75,30 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event)
 	al_wait_for_event(queue, event);
     	if (event -> type == ALLEGRO_EVENT_KEY_DOWN)
     		if(event -> keyboard.keycode == ALLEGRO_KEY_RIGHT)
-    			sarah -> sx++;
+    		{
+    			sarah -> sx+=2;
+    			sarah -> x+= sarah -> sx * 2;
+    		}
+    		else if(event -> keyboard.keycode == ALLEGRO_KEY_LEFT)
+    		{
+    			if (sarah -> sx > 0)
+	    			sarah -> sx = -1;
+    			else
+    				sarah -> sx--;
+
+    			sarah -> x+= sarah -> sx * 3;
+    		}	
+    			
 }
 void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
 {
-	if(sarah -> sx > 0)
-		sarah -> x++;
+	if (sarah -> sx < 0)
+		sarah -> sx++;
+	else if (sarah -> sx > 0)
+		sarah -> sx--;
+
+	//printf("%d\n",sarah -> sx );
+
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	make_background();
 	al_draw_scaled_bitmap(heroi,0,0,67,67,sarah -> x,sarah -> y,67,67,0);
