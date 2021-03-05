@@ -84,10 +84,10 @@ int main()
  
     while(1)
     {
-    	al_wait_for_event(queue, &event);
-    	if (event.type == ALLEGRO_EVENT_KEY_DOWN)
-    		if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-    			break;
+    	//al_wait_for_event(queue, &event);
+    	//if (event.type == ALLEGRO_EVENT_KEY_DOWN)
+    	//	if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+    	//		break;
 
         switch (state)
         {

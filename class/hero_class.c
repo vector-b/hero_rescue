@@ -74,20 +74,23 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event)
 {
 	al_wait_for_event(queue, event);
     	if (event -> type == ALLEGRO_EVENT_KEY_DOWN)
+        {
     		if(event -> keyboard.keycode == ALLEGRO_KEY_RIGHT)
     		{
-    			sarah -> sx+=2;
-    			sarah -> x+= sarah -> sx * 2;
+                if (sarah -> sx < 0)
+                    sarah -> sx += 2;
+                else
+    			    sarah -> sx+=2;
     		}
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_LEFT)
     		{
     			if (sarah -> sx > 0)
-	    			sarah -> sx = -1;
+	    			sarah -> sx = -2;
     			else
-    				sarah -> sx--;
-
-    			sarah -> x+= sarah -> sx * 3;
-    		}	
+    				sarah -> sx-=2;
+    		}
+            sarah -> x+= sarah -> sx * 10;
+        }	
     			
 }
 void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
