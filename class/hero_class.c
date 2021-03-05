@@ -5,10 +5,14 @@
 #include <allegro5/allegro_image.h>
 #define BACKGROUND_FILE "bg001.png"
 #define HERO_FILE "sarah_frontet.png"
+ALLEGRO_BITMAP  *background=NULL;
+ALLEGRO_BITMAP *heroi = NULL;
+hero *sarah = NULL;
+enum {LEFT = 1, UP, RIGHT, DOWN} direction ;
 
 void make_background()
 {
-	ALLEGRO_BITMAP  *background=NULL;
+	
 	if(!al_init_image_addon())
 	{
 	    printf("couldn't initialize image addon\n");
@@ -23,14 +27,14 @@ void make_background()
 
 }
 
-hero *make_hero(hero *sarah)
+void make_hero()
 {
 	sarah = malloc(sizeof(hero));
 	sarah -> x = 10;
 	sarah -> y = 393;
-	sarah -> sx, sarah -> sy = 0;   
+	sarah -> sx = 0;
+	sarah -> sy = 0;   
   	sarah -> w, sarah -> h = 67 ; 
-  	ALLEGRO_BITMAP *heroi = NULL;
 	heroi = al_load_bitmap(HERO_FILE);
 
   	if(!heroi)
@@ -40,16 +44,14 @@ hero *make_hero(hero *sarah)
     }
     al_draw_scaled_bitmap(heroi,0,0,67,67,sarah -> x,sarah -> y,67,67,0);
     //al_draw_bitmap(heroi,0,450,0);
-
-	return sarah;
 }
-void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, hero *sarah)
+void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state)
 {
 	al_init_image_addon();
 
 	make_background();
 
-	sarah = make_hero(sarah);
+	make_hero(sarah);
 	
     *state = 2;
 
@@ -57,20 +59,34 @@ void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY*
     al_flip_display();
 
 }
-void wait_for_keypress(int *state)
+void wait_for_keypress(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
 {
-	/*al_wait_for_event(queue, &event);
-    	if (event.type == ALLEGRO_EVENT_KEY_DOWN)
-    		if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-    			break;*/
+	al_wait_for_event(queue, event);
+    	if (event -> type == ALLEGRO_EVENT_KEY_DOWN)
+    		if(event -> keyboard.keycode == ALLEGRO_KEY_ENTER)
+    			*state = 3;
 }
-void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, hero *sarah)
+void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
 {
-	wait_for_keypress(state);
+	wait_for_keypress(timer,queue,disp,font,state,event);
 }
-void state_play()
+void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event)
 {
-
+	al_wait_for_event(queue, event);
+    	if (event -> type == ALLEGRO_EVENT_KEY_DOWN)
+    		if(event -> keyboard.keycode == ALLEGRO_KEY_RIGHT)
+    			sarah -> sx++;
+}
+void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
+{
+	if(sarah -> sx > 0)
+		sarah -> x++;
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	make_background();
+	al_draw_scaled_bitmap(heroi,0,0,67,67,sarah -> x,sarah -> y,67,67,0);
+    move_side(queue, event);
+    al_flip_display();
+    
 }
 void state_over()
 {

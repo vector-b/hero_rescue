@@ -71,7 +71,6 @@ int main()
 			jogar novament
 			volta pra serve
 	*/
-	hero *sarah;
 	state = 1;
 	al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -92,9 +91,9 @@ int main()
 
         switch (state)
         {
-        	case 1 : state_init (timer,queue,disp,font,&state,sarah) ;  break ;
-        	case 2 : state_serve (timer,queue,disp,font,&state,sarah) ; break ;
-         	case 3 : state_play () ;  break ;
+        	case 1 : state_init (timer,queue,disp,font,&state) ;  break ;
+        	case 2 : state_serve (timer,queue,disp,font,&state,&event) ; break ;
+         	case 3 : state_play (timer,queue,disp,font,&state,&event) ;  break ;
           	case 4 : state_over () ;  break ;
           	case 5 : state_close () ; break ;
           	default: break ;

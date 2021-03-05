@@ -33,11 +33,12 @@ struct border{
 };
 typedef struct hero hero;
 void make_background();
-hero *make_hero(hero *sarah);
-void wait_for_keypress(int *state);
-void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, hero *sarah);
-void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, hero *sarah);
-void state_play();
+void make_hero();
+void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event);
+void wait_for_keypress(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event);
+void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state);
+void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state,  ALLEGRO_EVENT *event);
+void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state,  ALLEGRO_EVENT *event);
 void state_over();
 void state_close();
 #endif
