@@ -18,11 +18,9 @@ ALLEGRO_BITMAP *heroi_run_right = NULL;
 ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brickone 		= NULL;
 
-
+direction d;
 obs **obstacles;
 hero *sarah = NULL;
-
-enum {LEFT = 1, UP, RIGHT, DOWN} direction ;
 
 void make_background()
 {
@@ -44,7 +42,7 @@ void make_background()
 void make_hero()
 {
 	sarah = malloc(sizeof(hero));
-	sarah -> x = 10;
+	sarah -> x = 500;
 	sarah -> y = FLOOR;
 	sarah -> sx = 0;
 	sarah -> sy = 0;   
@@ -67,7 +65,11 @@ void create_objects()
 {
 	obstacles = malloc(15* sizeof(obstacles));
 	for (int i = 0; i < 15; i++)
+	{
 		obstacles[i] = malloc(sizeof(obstacles[i]));
+		obstacles[i] -> using = 0;
+	}
+	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 654;
 	obstacles[0] -> h = 611;
 	obstacles[0] -> x = 600;
@@ -106,16 +108,55 @@ void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY
 {
 	wait_for_keypress(timer,queue,disp,font,state,event);
 }
+int search_hit(direction d)
+{
+	if (d == RIGHT)
+	{
+		for (int i = 0; i < 15; ++i)
+		{
+			if (obstacles[i] -> using == 1)
+			{
+				if (((sarah -> x + sarah -> w - 1 >= obstacles[i] -> x) && ( sarah -> x + sarah -> w <= obstacles[i] -> x + obstacles[i] -> rw )) && (sarah -> y + sarah -> h >=  obstacles[i] -> y)) 
+				{
+					return 1;
+				}
+			}	
+		}
+		
+	}
+	else if (d == LEFT)
+	{
+		for (int i = 0; i < 15; i++)
+		{
+			if (obstacles[i] -> using == 1)
+			{
+				if ((sarah -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1) && ((sarah -> x) > obstacles[i] -> x ))
+				{
+					return 1;
+				}
+			}
+		}
+		
+	}
+	return 0;
+}
 void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
 {
+	int backup_sx;
+	int backup_sy;
+	backup_sx = sarah -> sx;
+	backup_sy = sarah -> sy;
+	direction decision;
 	al_wait_for_event(queue, event);
     	if (event -> type == ALLEGRO_EVENT_KEY_DOWN)
     		if(event -> keyboard.keycode == ALLEGRO_KEY_RIGHT)
     		{
-    			if (sarah -> sx < 0)
+				if (sarah -> sx < 0)
 	    			sarah -> sx = 3;
     			else
-    				sarah -> sx+=3;
+    				sarah -> sx+=3; 
+
+    			decision = RIGHT; 			
     		}
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_LEFT)
     		{
@@ -123,6 +164,8 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
 	    			sarah -> sx = -3;
     			else
     				sarah -> sx-=3;
+    			
+    			decision = LEFT;
     		}
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_UP)
     		{
@@ -130,12 +173,18 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
     				sarah -> sy -= 14;
     				sarah -> y += sarah -> sy * 5;
     			}
-
+    			decision = UP;
     		}
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_ESCAPE)
     			*state = 5;
 
-    		sarah -> x += sarah -> sx * 7;		
+    		if(!search_hit(decision))
+	    		sarah -> x += sarah -> sx * 7;		
+	    	else
+	    	{
+	    		sarah -> sy = backup_sy;
+	    		sarah -> sx = backup_sx;
+	    	}
 }
 void draw_hero()
 {
@@ -150,8 +199,8 @@ void draw_hero()
 }
 void hit()
 {
-	if((obstacles[0] -> x <= sarah -> x ) && (sarah -> x <= obstacles[0] -> x + obstacles[0] -> w))
-		sarah -> y = obstacles[0] -> y - sarah -> h;
+	/*if((obstacles[0] -> x <= sarah -> x ) && (sarah -> x <= obstacles[0] -> x + obstacles[0] -> w))
+		sarah -> y = obstacles[0] -> y - sarah -> h;*/
 }
 void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
 {
