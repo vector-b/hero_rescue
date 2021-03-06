@@ -8,37 +8,29 @@
 struct hero{
 	int live;
 	int x,y;
-	short sx, sy ;   
-  	short w, h ; 
+	short sx, sy;   
+  	short w, h; 
 };
-struct floor{
-	int x;
-	int y;
-	int size_x;
+struct obs{
+	int x,y;
+	short sx, sy;   
+  	short w, h; 
+  	short rw,rh; //Valores após resize
 };
-struct wall{
-	int x;
-	int y;
-	int size_x;
-};
-struct gem{
-	int x;
-	int y;
-	int size_x;
-};
-
-struct border{
-	int x;
-	int y;
-};
+typedef struct obs obs;
 typedef struct hero hero;
+void create_objects();
 void make_background();
 void make_hero();
-void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event);
+void draw_hero();
+void hit();
+
+void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state);
 void wait_for_keypress(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event);
+
 void state_init(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state);
 void state_serve(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state,  ALLEGRO_EVENT *event);
 void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state,  ALLEGRO_EVENT *event);
 void state_over();
-void state_close();
+void state_close(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state);
 #endif

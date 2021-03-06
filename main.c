@@ -84,18 +84,17 @@ int main()
  
     while(1)
     {
-    	//al_wait_for_event(queue, &event);
-    	//if (event.type == ALLEGRO_EVENT_KEY_DOWN)
-    	//	if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-    	//		break;
-
+    	if (state == 5)
+    	{
+    		break;
+    	}
         switch (state)
         {
         	case 1 : state_init (timer,queue,disp,font,&state) ;  break ;
         	case 2 : state_serve (timer,queue,disp,font,&state,&event) ; break ;
          	case 3 : state_play (timer,queue,disp,font,&state,&event) ;  break ;
           	case 4 : state_over () ;  break ;
-          	case 5 : state_close () ; break ;
+          	case 5 : state_close(timer,queue,disp,font,&state) ; break ;
           	default: break ;
         }
     }
