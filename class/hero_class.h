@@ -28,6 +28,7 @@ void create_objects();
 void make_background();
 void make_hero();
 void draw_hero();
+void write_obstacles();
 void hit();
 
 void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state);

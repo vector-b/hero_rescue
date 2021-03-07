@@ -42,7 +42,7 @@ void make_background()
 void make_hero()
 {
 	sarah = malloc(sizeof(hero));
-	sarah -> x = 600;
+	sarah -> x = 500;
 	sarah -> y = FLOOR ;
 	sarah -> sx = 0;
 	sarah -> sy = 0;   
@@ -182,7 +182,7 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_ESCAPE)
     			*state = 5;
 
-    		if(!search_hit(decision))
+    		if(1)
 	    		sarah -> x += sarah -> sx * 7;		
 	    	else
 	    	{
@@ -203,8 +203,30 @@ void draw_hero()
 }
 void hit()
 {
-	/*if((obstacles[0] -> x <= sarah -> x ) && (sarah -> x <= obstacles[0] -> x + obstacles[0] -> w))
-		sarah -> y = obstacles[0] -> y - sarah -> h;*/
+	int char_size = sarah -> x + sarah-> rw -1;
+	int obs_size;
+	for (int i = 0; i < 15; i++)
+	{
+		if (obstacles[i] -> using == 1)
+		{
+			obs_size = obstacles[i] -> x + obstacles[i] -> rw -1;
+			//Hitbox Esquerda
+			if ((sarah -> x >= obstacles[i] -> x - sarah -> rw +1) && (sarah -> x <= obs_size))
+			{
+				if (sarah -> x < (obstacles[0]->x  + obs_size)/2)
+					sarah -> x = obstacles[i] -> x - sarah -> rw;
+				else
+					sarah -> x = obs_size+1;
+				
+			}
+		}	
+	}
+	
+}
+void write_obstacles()
+{
+	al_draw_scaled_bitmap(brickone,0,0,654,611,obstacles[0] -> x,obstacles[0] -> y,obstacles[0] -> rw,obstacles[0] -> rh,0);
+
 }
 void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event)
 {
@@ -224,7 +246,7 @@ void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY*
 
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_draw_scaled_bitmap(background,0,0,905,703,0,0,800,500,0);
-	al_draw_scaled_bitmap(brickone,0,0,654,611,obstacles[0] -> x,obstacles[0] -> y,obstacles[0] -> rw,obstacles[0] -> rh,0);
+	write_obstacles();
 
 	draw_hero();
     move_side(queue, event,state);
