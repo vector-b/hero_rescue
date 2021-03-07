@@ -3,6 +3,10 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
+#define RESERVED_SAMPLES   16
+#define MAX_SAMPLE_DATA    10
 //enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 int state;
 int main()
@@ -10,7 +14,10 @@ int main()
 	ALLEGRO_TIMER* timer;
 	ALLEGRO_EVENT_QUEUE* queue;
 	ALLEGRO_DISPLAY* disp;
+
 	ALLEGRO_FONT* font;
+	ALLEGRO_SAMPLE *sample_data = NULL;
+
 
 	if(!al_init())
 	{
@@ -34,6 +41,30 @@ int main()
 	    printf("couldn't initialize queue\n");
 	    exit(1);
 	}
+
+	if (!al_install_audio()) 
+	{
+	   fprintf(stderr, "Could not init sound!\n");
+	   return 1;
+	}
+	if (!al_init_acodec_addon())
+	{
+		fprintf(stderr, "Could not init sound!\n");
+	   	return 1;
+	}
+	if (!al_reserve_samples(RESERVED_SAMPLES)) 
+	{
+      fprintf(stderr, "Could not set up voice and mixer.\n");
+      return 1;
+    }
+
+    char filename[100] ="song/undertale.mp3";
+    sample_data = al_load_sample("song/undertale.mp3");
+    if (!sample_data) 
+    {
+    	fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+
+    }
 	int height, width;
 	width = 800; // 38 blocos de terra + 2 border
 	height = 500; //10 pixels header 

@@ -18,6 +18,7 @@ ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brickone 		= NULL;
 
 int FLOOR = 392;
+int FLOOR_COPY = 392;
 direction d;
 obs **obstacles;
 hero *sarah = NULL;
@@ -42,7 +43,7 @@ void make_background()
 void make_hero()
 {
 	sarah = malloc(sizeof(hero));
-	sarah -> x = 500;
+	sarah -> x = 700;
 	sarah -> y = FLOOR ;
 	sarah -> sx = 0;
 	sarah -> sy = 0;   
@@ -174,7 +175,7 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
     		else if(event -> keyboard.keycode == ALLEGRO_KEY_UP)
     		{
     			if(sarah -> sy == 0){
-    				sarah -> sy -= 14;
+    				sarah -> sy -= 21;
     				FLOOR += sarah -> sy * 5;
     			}
     			decision = UP;
@@ -210,13 +211,29 @@ void hit()
 		if (obstacles[i] -> using == 1)
 		{
 			obs_size = obstacles[i] -> x + obstacles[i] -> rw -1;
-			//Hitbox Esquerda
+			//Hitbox
 			if ((sarah -> x >= obstacles[i] -> x - sarah -> rw +1) && (sarah -> x <= obs_size))
 			{
-				if (sarah -> x < (obstacles[0]->x  + obs_size)/2)
-					sarah -> x = obstacles[i] -> x - sarah -> rw;
+				if ((sarah -> y + sarah -> rh <= obstacles[i] -> y) || (sarah -> y >= obstacles[i] -> y + obstacles[i]->rh -1))
+				{
+					/* Do Nothing */
+					printf("%d - %d\n",sarah -> y + sarah -> rh , obstacles[i] -> y);
+					if (sarah -> y + sarah -> rh  == obstacles[i] -> y - 3 )
+					{
+						FLOOR = obstacles[i] -> y - 1 - sarah -> rh;
+						sarah -> sy = 0;
+					}
+				}
 				else
-					sarah -> x = obs_size+1;
+				{
+					if (FLOOR != obstacles[i] -> y - 1 - sarah -> rh)
+					{
+						if (sarah -> x < (obstacles[i]-> x  + obs_size)/2)
+							sarah -> x = obstacles[i] -> x - sarah -> rw;
+						else
+							sarah -> x = obs_size+1;
+					}
+				}
 				
 			}
 		}	
@@ -238,12 +255,11 @@ void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY*
 	if (sarah -> sy < 0)
 	{
 		sarah -> sy +=1;
-		FLOOR += 1 * 5;
+		FLOOR += 5;
 	}
 	sarah -> y = FLOOR;
 
 	hit();
-
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_draw_scaled_bitmap(background,0,0,905,703,0,0,800,500,0);
 	write_obstacles();
