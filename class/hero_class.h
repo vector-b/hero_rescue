@@ -9,7 +9,8 @@ struct hero{
 	int live;
 	int x,y;
 	short sx, sy;   
-  	short w, h; 
+  	short w, h;
+  	short rw,rh;  
 };
 struct obs{
 	int using;

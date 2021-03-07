@@ -9,7 +9,6 @@
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
 #define BRICK_1			"img/brick_1.png"
-#define FLOOR 407
 #define TRUE_FLOOR 456
 
 ALLEGRO_BITMAP *background 		= NULL;
@@ -18,6 +17,7 @@ ALLEGRO_BITMAP *heroi_run_right = NULL;
 ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brickone 		= NULL;
 
+int FLOOR = 392;
 direction d;
 obs **obstacles;
 hero *sarah = NULL;
@@ -42,12 +42,14 @@ void make_background()
 void make_hero()
 {
 	sarah = malloc(sizeof(hero));
-	sarah -> x = 500;
-	sarah -> y = FLOOR;
+	sarah -> x = 600;
+	sarah -> y = FLOOR ;
 	sarah -> sx = 0;
 	sarah -> sy = 0;   
-  	sarah -> w = 70;
-  	sarah -> h = 51 ; 
+  	sarah -> w = 20;
+  	sarah -> h = 29;
+  	sarah -> rw = 45;
+  	sarah -> rh = 65;  
 	heroi = al_load_bitmap(HERO_FILE);
 	heroi_run_right = al_load_bitmap(RUN_RIGHT);
 	heroi_run_left = al_load_bitmap(RUN_LEFT);
@@ -58,7 +60,7 @@ void make_hero()
         fprintf(stderr, "failed to load hero bitmap!\n");
         exit(1);
     }
-    al_draw_scaled_bitmap(heroi,0,0,50,37,sarah -> x,sarah -> y,sarah -> w,sarah -> h,0);
+    al_draw_scaled_bitmap(heroi,0,0,sarah -> w,sarah -> h,sarah -> x,sarah -> y,sarah -> rw,sarah -> rh,0);
     //al_draw_bitmap(heroi,0,450,0);
 }
 void create_objects()
@@ -116,8 +118,9 @@ int search_hit(direction d)
 		{
 			if (obstacles[i] -> using == 1)
 			{
-				if (((sarah -> x + sarah -> w - 1 >= obstacles[i] -> x) && ( sarah -> x + sarah -> w <= obstacles[i] -> x + obstacles[i] -> rw )) && (sarah -> y + sarah -> h >=  obstacles[i] -> y)) 
+				if (((sarah -> x + sarah -> rw >= obstacles[i] -> x) && ( sarah -> x + sarah -> rw <= obstacles[i] -> x + obstacles[i] -> rw )) && (sarah -> y + sarah -> rh >=  obstacles[i] -> y)) 
 				{
+					sarah -> x = obstacles[i] -> x - 1;
 					return 1;
 				}
 			}	
@@ -130,8 +133,9 @@ int search_hit(direction d)
 		{
 			if (obstacles[i] -> using == 1)
 			{
-				if ((sarah -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1) && ((sarah -> x) > obstacles[i] -> x ))
+				if ((sarah -> x - 21  <= obstacles[i] -> x + obstacles[i] -> rw - 1) && ((sarah -> x) > obstacles[i] -> x ))
 				{
+					sarah -> x = obstacles[i] -> x + obstacles[i] -> rw + 1;
 					return 1;
 				}
 			}
@@ -171,7 +175,7 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
     		{
     			if(sarah -> sy == 0){
     				sarah -> sy -= 14;
-    				sarah -> y += sarah -> sy * 5;
+    				FLOOR += sarah -> sy * 5;
     			}
     			decision = UP;
     		}
@@ -189,11 +193,11 @@ void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state)
 void draw_hero()
 {
 	if (sarah -> sx == 0)
-		al_draw_scaled_bitmap(heroi,0,0,50,37,sarah -> x,sarah -> y,sarah -> w,sarah -> h,0);
+		al_draw_scaled_bitmap(heroi,0,0,sarah -> w,sarah -> h,sarah -> x,FLOOR,sarah -> rw,sarah -> rh,0);
 	else if(sarah -> sx > 0 )
-		al_draw_scaled_bitmap(heroi_run_right,0,0,50,37,sarah -> x,sarah -> y,sarah -> w,sarah -> h,0);
+		al_draw_scaled_bitmap(heroi_run_right,0,0,sarah -> w,sarah -> h,sarah -> x,FLOOR,sarah -> rw,sarah -> rh,0);
 	else 
-		al_draw_scaled_bitmap(heroi_run_left,0,0,50,37,sarah -> x,sarah -> y,sarah -> w,sarah -> h,0);
+		al_draw_scaled_bitmap(heroi_run_left,0,0,sarah -> w,sarah -> h,sarah -> x,FLOOR,sarah -> rw,sarah -> rh,0);
 
 
 }
@@ -212,8 +216,9 @@ void state_play(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY*
 	if (sarah -> sy < 0)
 	{
 		sarah -> sy +=1;
-		sarah -> y += 1 * 5;
+		FLOOR += 1 * 5;
 	}
+	sarah -> y = FLOOR;
 
 	hit();
 
