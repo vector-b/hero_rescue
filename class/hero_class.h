@@ -17,6 +17,7 @@ struct obs{
 	int x,y;
 	short dx, dy;  
   	short w, h; 
+  	short inside;
   	short rw,rh; //Valores após resize
 };
 typedef struct obs obs;
@@ -32,7 +33,7 @@ void make_background();
 void make_hero();
 void draw_hero();
 void write_obstacles();
-void hit(int *out);
+void hit();
 void delta_transform();
 void move_side();
 void gravity_check();

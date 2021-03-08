@@ -9,16 +9,19 @@
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
+#define BRICK_FILE 		"img/moss_tile.png"
 #define GROUND 435
 #define CONSTANTE_X 10
-#define CONSTANTE_Y 20
+#define CONSTANTE_Y 40
 
 ALLEGRO_BITMAP *background 		= NULL;
-ALLEGRO_BITMAP  *heroi 			= NULL;
+ALLEGRO_BITMAP *heroi 			= NULL;
 ALLEGRO_BITMAP *heroi_right 	= NULL;
 ALLEGRO_BITMAP *heroi_left 		= NULL;
 ALLEGRO_BITMAP *heroi_run_right = NULL;
 ALLEGRO_BITMAP *heroi_run_left 	= NULL;
+ALLEGRO_BITMAP *brick 			= NULL;
+
 
 int old_dx;
 int old_dy;
@@ -36,26 +39,24 @@ void create_objects()
 		obstacles[i] -> using = 0;
 	}
 	obstacles[0] -> using = 1;
-	obstacles[0] -> w = 654;
-	obstacles[0] -> h = 611;
+	obstacles[0] -> w = 522;
+	obstacles[0] -> h = 522;
 	obstacles[0] -> x = 200;
-	obstacles[0] -> rw = 40;
-	obstacles[0] -> rh = 36;
-	obstacles[0] -> y =	435 - obstacles[0] -> rh;
+	obstacles[0] -> rw = 50;
+	obstacles[0] -> rh = 50;
+	obstacles[0] -> y =	200 - obstacles[0] -> rh;
 	obstacles[0] -> dx,obstacles[0] -> dy = 0;
 
 
 
 	obstacles[1] -> using = 1;
-	obstacles[1] -> w = 654;
-	obstacles[1] -> h = 611;
+	obstacles[1] -> w = 522;
+	obstacles[1] -> h = 522;
 	obstacles[1] -> x = 600;
-	obstacles[1] -> rw = 40;
-	obstacles[1] -> rh = 36;
-	obstacles[1] -> y =	435 - obstacles[0] -> rh;
+	obstacles[1] -> rw = 50;
+	obstacles[1] -> rh = 50;
+	obstacles[1] -> y = GROUND - obstacles[0] -> rh;
 	obstacles[1] -> dx,obstacles[0] -> dy = 0;
-
-
 
 }
 void make_hero()
@@ -67,12 +68,18 @@ void make_hero()
   	hero_ -> h = 29;
   	hero_ -> rw = 45;
   	hero_ -> rh = 65;
-  	hero_ -> x = 100;
+  	hero_ -> x = 700;
 	hero_ -> y = GROUND - hero_ -> rh ;  
 	heroi_right 	= al_load_bitmap(HERO_FILE);
 	heroi_run_right = al_load_bitmap(RUN_RIGHT);
 	heroi_run_left	= al_load_bitmap(RUN_LEFT);
 	heroi_left 		= al_load_bitmap(H_LEFT);
+	brick = al_load_bitmap(BRICK_FILE);
+	if (!brick)
+	{
+		fprintf(stderr, "Não leu o brick file" );
+		exit(1);
+	}
 	heroi = heroi_right;
 
   	if(!heroi)
@@ -113,6 +120,7 @@ void state_serve(ALLEGRO_EVENT *evento)
 {
 	
 }
+
 void draw_hero()
 {
 	if(last_right)
@@ -125,6 +133,45 @@ void draw_hero()
 		al_draw_scaled_bitmap(heroi_run_right,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 	else 
 		al_draw_scaled_bitmap(heroi_run_left,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+}
+void hit()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+		{
+
+			//printf("%d\n",hero_ -> y );
+			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
+			{
+				//Em cima da caixa
+				if (hero_ -> y + hero_ -> rh == obstacles[i] -> y -2)
+				{
+					FLOOR = obstacles[i] -> y-2;
+					hero_ -> y = FLOOR;
+					hero_ -> x = (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2));
+					obstacles[i] -> inside = 1;
+					//Pisando na caixa
+					//muda o floor
+				}
+			}
+			else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
+			{
+				//Em baixo da caixa 
+			}
+			else if (FLOOR != obstacles[i] -> y -2)
+			{
+				if (hero_ -> x + hero_ -> rw <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
+					hero_ -> x = obstacles[i] -> x - hero_ -> rw;
+				else
+					hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
+			}
+		}
+	}
+	
+	
+	
+	
 }
 void move_side()
 {
@@ -147,7 +194,6 @@ void move_side()
 }
 void delta_transform()
 {
-
 	if (hero_ -> dx != 0)
 	{
 		if (hero_ -> dx > 0)
@@ -167,20 +213,20 @@ void delta_transform()
 		{
 			hero_ -> y += hero_ -> dy * 2;
 		}
-		else
-		{
-			hero_ -> y += hero_ -> dy * 2;
-		}
+		
 	}
+}
+void write_obstacles()
+{
 	
+	//Imprime os obstaculos existentes
+	for (int i = 0; i < 2; i++)
+	{
+		al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+	}
 }
 void gravity_check()
 {
-	/*int out = 1;
-	for (int i = 0; i < 15; i++)
-	{
-		
-	}*/
 	if (hero_ -> y < (FLOOR - hero_ -> rh))
 	{
 		hero_ -> y -= hero_ -> dy * 2 ;
@@ -193,16 +239,19 @@ void state_play()
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	//Imprime o background
     al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
+    //Imprime obstaculos
+    write_obstacles();
 	//Checagem da gravidade
 	gravity_check();
 	//Altera o variação de velocidade do personagem
 	move_side();
+
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
-
-
     //Desenha o personagem controlavel
 	draw_hero();
+	//Checa Hit
+	hit();
 
 
 	al_flip_display();
