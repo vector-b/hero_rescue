@@ -8,14 +8,14 @@
 struct hero{
 	int live;
 	int x,y;
-	short sx, sy;   
+	short dx, dy;   
   	short w, h;
   	short rw,rh;  
 };
 struct obs{
 	int using;
 	int x,y;
-	short sx, sy;  
+	short dx, dy;  
   	short w, h; 
   	short rw,rh; //Valores após resize
 };
@@ -23,6 +23,8 @@ typedef struct obs obs;
 typedef struct hero hero;
 typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 state estado;
+typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
+direcao dir;
 
   
 void create_objects();
@@ -31,9 +33,10 @@ void make_hero();
 void draw_hero();
 void write_obstacles();
 void hit(int *out);
+void delta_transform();
+void move_side();
+void gravity_check();
 
-void move_side(ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_EVENT *event, int *state);
-void wait_for_keypress(ALLEGRO_TIMER* timer,ALLEGRO_EVENT_QUEUE* queue,ALLEGRO_DISPLAY* disp,ALLEGRO_FONT* font, int *state, ALLEGRO_EVENT *event);
 
 void state_init(ALLEGRO_FONT* font);
 void state_serve(ALLEGRO_EVENT *evento);

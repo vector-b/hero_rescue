@@ -87,8 +87,8 @@ int main()
 
 	//Registra os eventos do programa
 	al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_timer_event_source(timer));
-    al_register_event_source(queue, al_get_display_event_source(disp));
+  al_register_event_source(queue, al_get_timer_event_source(timer));
+  al_register_event_source(queue, al_get_display_event_source(disp));
 
 
 
@@ -103,7 +103,7 @@ int main()
     	ALLEGRO_EVENT evento;
         al_wait_for_event(queue, &evento);
 
-        
+      
     	if(evento.type == ALLEGRO_EVENT_TIMER)
     	{
           	switch(estado)
@@ -127,6 +127,18 @@ int main()
                 break;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) && (estado == SERVINDO))
             	estado = JOGANDO;
+            else if(estado == JOGANDO)
+            {
+              if(evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
+                dir = ESQUERDA;
+              else if (evento.keyboard.keycode == ALLEGRO_KEY_UP)
+                dir = CIMA;
+              else if (evento.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+                dir = DIREITA;
+              else if (evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                dir = BAIXO;
+
+            }
         }
         else if(evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         	break;
