@@ -12,6 +12,7 @@
 
 int main()
 {
+  fim = 0;
 	ALLEGRO_TIMER* timer;
 	ALLEGRO_EVENT_QUEUE* queue;
 	ALLEGRO_DISPLAY* disp;
@@ -53,7 +54,7 @@ int main()
 
     //Puxa a música e inicia 
     char filename[100] ="song/undertale.mp3";
-    sample_data = al_load_sample("song/undertale.wav");
+    sample_data = al_load_sample("song/dqv_zen.wav");
     if (!sample_data) 
     {
     	fprintf(stderr, "Could not load sample from '%s'!\n", filename);
@@ -98,7 +99,7 @@ int main()
 
     
     //Início do Loop Principal do programa
-    while(1)
+    while(!fim)
     {
     	ALLEGRO_EVENT evento;
         al_wait_for_event(queue, &evento);
@@ -113,7 +114,7 @@ int main()
           		case 2:
           			state_serve(&evento);break;
           		case 3:
-          			state_play();break;
+          			state_play(font);break;
           		case 4:
           			state_init(font);break;
           		case 5:

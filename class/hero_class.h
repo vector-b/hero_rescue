@@ -20,12 +20,32 @@ struct obs{
   	short inside;
   	short rw,rh; //Valores após resize
 };
+struct monster
+{
+	int type;
+	int using;
+	int live;
+	int x,y;
+	int vai;
+	int sobe;
+	int x_ini,x_dest;
+	int y_ini,y_dest;
+	short dx, dy;  
+  	short w, h; 
+  	short rw,rh;
+  	int checa_sprite;
+  	int num_sprite;
+
+};
+
+typedef struct monster monster;
 typedef struct obs obs;
 typedef struct hero hero;
 typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 state estado;
 typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
 direcao dir;
+int fim;
 
   
 void create_objects();
@@ -38,11 +58,12 @@ void delta_transform();
 void move_side();
 void gravity_check();
 void CameraUpdate();
+void cria_monstros_estruturas();
 
 
 void state_init(ALLEGRO_FONT* font);
 void state_serve(ALLEGRO_EVENT *evento);
-void state_play();
+void state_play(ALLEGRO_FONT* font);
 void state_over();
 void state_close();
 #endif
