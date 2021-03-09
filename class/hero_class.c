@@ -10,9 +10,11 @@
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
 #define BRICK_FILE 		"img/moss_tile.png"
+#define MOB_IMAGE		"img/mob/"
 #define GROUND 435
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 40
+#define MAX_WIDTH 1600;
 
 ALLEGRO_BITMAP *background 		= NULL;
 ALLEGRO_BITMAP *heroi 			= NULL;
@@ -21,12 +23,14 @@ ALLEGRO_BITMAP *heroi_left 		= NULL;
 ALLEGRO_BITMAP *heroi_run_right = NULL;
 ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brick 			= NULL;
+ALLEGRO_BITMAP *mob 			= NULL;
 
-
+int checa_sprite = 0;
+int num_sprite = 0;
 int old_dx;
 int old_dy;
 int last_right = 0;
-
+int stage = 0;
 hero *hero_     = NULL;
 obs **obstacles = NULL;
 int FLOOR;
@@ -35,8 +39,7 @@ void create_objects()
 	obstacles = malloc(15* sizeof(obstacles));
 	for (int i = 0; i < 15; i++)
 	{
-		obstacles[i] = malloc(sizeof(obstacles[i]));
-		obstacles[i] -> using = 0;
+		obstacles[i] = malloc(10*sizeof(obstacles));
 	}
 	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 522;
@@ -47,16 +50,43 @@ void create_objects()
 	obstacles[0] -> y =	200 - obstacles[0] -> rh;
 	obstacles[0] -> dx,obstacles[0] -> dy = 0;
 
-
-
 	obstacles[1] -> using = 1;
 	obstacles[1] -> w = 522;
 	obstacles[1] -> h = 522;
 	obstacles[1] -> x = 600;
 	obstacles[1] -> rw = 50;
 	obstacles[1] -> rh = 50;
-	obstacles[1] -> y = GROUND - obstacles[0] -> rh;
-	obstacles[1] -> dx,obstacles[0] -> dy = 0;
+	obstacles[1] -> y = GROUND - obstacles[1] -> rh;
+	obstacles[1] -> dx,obstacles[1] -> dy = 0;
+
+}
+void inicia_mobs()
+{
+	checa_sprite++;
+	obstacles[2] -> using = 1;
+	obstacles[2] -> w = 315;
+	obstacles[2] -> h = 329;
+	obstacles[2] -> x = 600;
+	obstacles[2] -> rw = 50;
+	obstacles[2] -> rh = 50;
+	obstacles[2] -> y = GROUND - obstacles[2] -> rh;
+	obstacles[2] -> dx,obstacles[0] -> dy = 0;
+
+	if((checa_sprite % 2) == 0 )
+		num_sprite++;
+
+	char filename[100] = "";
+	snprintf(filename, 12, "%d.png", num_sprite);
+
+	char path[100] = "";
+	strcat(path, MOB_IMAGE);
+	strcat(path, filename);
+	mob = al_load_bitmap(path);
+	if (num_sprite == 42)
+		num_sprite = 0;
+	if (checa_sprite == 999)
+		checa_sprite = 0;
+
 
 }
 void make_hero()
@@ -117,8 +147,7 @@ void state_init(ALLEGRO_FONT* font)
 	estado = SERVINDO;
 }
 void state_serve(ALLEGRO_EVENT *evento)
-{
-	
+{	
 }
 
 void draw_hero()
@@ -140,17 +169,15 @@ void hit()
 	{
 		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 		{
-
 			//printf("%d\n",hero_ -> y );
 			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 			{
 				//Em cima da caixa
 				if (hero_ -> y + hero_ -> rh == obstacles[i] -> y -2)
 				{
-					FLOOR = obstacles[i] -> y-2;
-					hero_ -> y = FLOOR;
-					hero_ -> x = (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2));
-					obstacles[i] -> inside = 1;
+					//FLOOR = obstacles[i] -> y-2;
+					//hero_ -> y = FLOOR;
+					//hero_ -> x = (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2));
 					//Pisando na caixa
 					//muda o floor
 				}
@@ -167,11 +194,7 @@ void hit()
 					hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
 			}
 		}
-	}
-	
-	
-	
-	
+	}	
 }
 void move_side()
 {
@@ -218,27 +241,51 @@ void delta_transform()
 }
 void write_obstacles()
 {
-	
 	//Imprime os obstaculos existentes
-	for (int i = 0; i < 2; i++)
-	{
-		al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+	if (stage == 0)
+		for (int i = 0; i < 2; i++)
+			al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+	if (stage == 1){
+		inicia_mobs();
+		al_draw_scaled_bitmap(mob,0,0,obstacles[2] -> w,obstacles[2] -> h,obstacles[2] -> x,obstacles[2] -> y,obstacles[2] -> rw,obstacles[2] -> rh,0);
+		al_destroy_bitmap(mob);
 	}
+
+
 }
 void gravity_check()
 {
+	/*int out = 1;
+	for (int i = 0; i < 15; i++)
+	{
+		
+	}*/
 	if (hero_ -> y < (FLOOR - hero_ -> rh))
 	{
 		hero_ -> y -= hero_ -> dy * 2 ;
 		hero_ -> dy += 2;
 	}
 }
+void CameraUpdate()
+{
+
+	al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
+
+}
+//Fũnção principal de gameplay
 void state_play()
 {
+	if (hero_ -> x > 800){
+		stage++;
+		hero_ -> x = 50;
+		hero_ -> y = GROUND - hero_ -> rh;
+		hero_ -> dy = 0;
+		hero_ -> dx = 0;
+	}
 	//Limpa a tela
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	//Imprime o background
-    al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
+	CameraUpdate();
     //Imprime obstaculos
     write_obstacles();
 	//Checagem da gravidade

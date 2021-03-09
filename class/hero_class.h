@@ -37,6 +37,7 @@ void hit();
 void delta_transform();
 void move_side();
 void gravity_check();
+void CameraUpdate();
 
 
 void state_init(ALLEGRO_FONT* font);

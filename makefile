@@ -2,7 +2,7 @@
 OBJS =  main.c
 TARG = hero
 TO_C = hero hero.o 
-CFLAG = -g
+CFLAG = 
 CC = gcc
 INCLUDE = class/hero_class.c
 LIBS = -lm $$(pkg-config --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_audio-5 allegro_acodec-5)
