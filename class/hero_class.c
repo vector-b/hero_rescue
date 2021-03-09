@@ -11,6 +11,7 @@
 #define H_LEFT 			"img/hero_left.png"
 #define BRICK_FILE 		"img/moss_tile.png"
 #define MOB_IMAGE		"img/mob/"
+#define HERO_IMAGE		"img/hero/"
 #define GROUND 435
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 40
@@ -24,9 +25,15 @@ ALLEGRO_BITMAP *heroi_run_right = NULL;
 ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brick 			= NULL;
 ALLEGRO_BITMAP *mob 			= NULL;
+ALLEGRO_BITMAP *stand 			= NULL;
+
 
 int checa_sprite = 0;
 int num_sprite = 0;
+
+
+int checa_sprite_hero =0;
+int num_sprite_hero = 1;
 int old_dx;
 int old_dy;
 int last_right = 0;
@@ -157,7 +164,30 @@ void draw_hero()
 	else
 		heroi = heroi_left;
 	if (old_dx == 0)
-		al_draw_scaled_bitmap(heroi,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+	{
+		checa_sprite_hero++;
+		if((checa_sprite_hero % 25) == 0 )
+			num_sprite_hero++;
+
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", num_sprite_hero);
+
+		char path[100] = "";
+		strcat(path, HERO_IMAGE);
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		
+		if (num_sprite_hero >= 4)
+			num_sprite_hero = 1;
+		if (checa_sprite_hero == 500)
+			checa_sprite_hero = 0;
+
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		
+	}
 	else if(old_dx > 0 )
 		al_draw_scaled_bitmap(heroi_run_right,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 	else 
