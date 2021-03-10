@@ -3,6 +3,8 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
 
 #define BACKGROUND_FILE "img/bg002.png"
 #define HERO_FILE 		"img/hero.png"
@@ -13,16 +15,23 @@
 #define MOB_IMAGE		"img/mob/"
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_SPACE		"img/space_ship/space_ship_rsz.png"
+#define END_GAME_IMAGE 	"img/end_game.png"
+
+#define JUMP			"img/hero/jump/"
+#define FALL			"img/hero/fall/"
 
 #define HERO_IMAGE		"img/hero/"
 #define GROUND 435
 #define CONSTANTE_X 10
-#define CONSTANTE_Y 40
+#define CONSTANTE_Y 160
+#define CONSTANTE_G 10
 #define MAX_WIDTH 1600;
 
 int PONTUACAO = 0;
-
+int cont_saltos = 0; 
+int jumping = 0;
 ALLEGRO_BITMAP *background 		= NULL;
+ALLEGRO_BITMAP *end_game 		= NULL;
 ALLEGRO_BITMAP *heroi 			= NULL;
 ALLEGRO_BITMAP *heroi_right 	= NULL;
 ALLEGRO_BITMAP *heroi_left 		= NULL;
@@ -234,7 +243,48 @@ void draw_hero()
 		heroi = heroi_right;
 	else
 		heroi = heroi_left;
-	if (old_dx == 0)
+	if (jumping)
+	{
+		int chosen = 1;
+		if (hero_ -> y  > FLOOR + (hero_ -> dy/4))
+		{
+			chosen = 1;
+		}
+		else if(hero_ -> y  > FLOOR + (hero_ -> dy/2))
+		{
+			chosen = 2;
+		}
+		else
+		{
+			chosen = 3;
+		}
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", chosen);
+
+		char path[100] = "";
+		strcat(path, JUMP);
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		al_destroy_bitmap(stand);
+	}
+	else if (hero_ -> dy < 0)
+	{
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", 0);
+
+		char path[100] = "";
+		strcat(path, FALL);
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		al_destroy_bitmap(stand);
+	}
+	else if (hero_ -> dx == 0)
 	{
 		checa_sprite_hero++;
 		if((checa_sprite_hero % 25) == 0 )
@@ -258,9 +308,8 @@ void draw_hero()
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
 		al_destroy_bitmap(stand);
-
 	}
-	else if(old_dx > 0 )
+	else if(hero_ -> dx > 0 )
 		al_draw_scaled_bitmap(heroi_run_right,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 	else 
 		al_draw_scaled_bitmap(heroi_run_left,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
@@ -275,13 +324,9 @@ void hit()
 			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 			{
 				//Em cima da caixa
-				if (hero_ -> y + hero_ -> rh == obstacles[i] -> y -2)
+				if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
 				{
-					//FLOOR = obstacles[i] -> y-2;
-					//hero_ -> y = FLOOR;
-					//hero_ -> x = (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2));
-					//Pisando na caixa
-					//muda o floor
+					printf("sai de cima fdp\n");
 				}
 			}
 			else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
@@ -299,7 +344,7 @@ void hit()
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		if (monsters[i] -> live == 1)
+		if (monsters[i] -> live == 1 && stage == 1)
 		{
 			if ((hero_ -> x + hero_ -> rw >= monsters[i] -> x) && (hero_ -> x <= monsters[i] -> x + monsters[i] -> rw - 1))
 			{
@@ -310,6 +355,18 @@ void hit()
 					if ((hero_ -> y + hero_ -> rh <=  monsters[i] -> y ) && (hero_ -> y + hero_ -> rh > monsters[i] -> y - 5) ) 
 					{
 						monsters[i] -> live = 0;
+						ALLEGRO_SAMPLE *kill_sound;
+						kill_sound = al_load_sample("song/kill.wav");
+						if (!kill_sound) 
+						{
+							fprintf(stderr, "Could not load kill sound!\n");
+							exit(1);
+						}
+						if (!al_play_sample(kill_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL)) {
+						              fprintf(stderr,
+						                 "al_play_sample_data failed, perhaps too many sounds\n");
+						           }
+
 						PONTUACAO+=5;
 					}
 				}
@@ -334,8 +391,24 @@ void move_side()
 			hero_ -> dx -= CONSTANTE_X;
 			last_right = 0;
 		}
-		else if(dir == CIMA)
-			hero_ -> dy -= CONSTANTE_Y;
+		else if(dir == CIMA){
+			if (!jumping)
+			{
+				hero_ -> dy -= CONSTANTE_Y;
+				ALLEGRO_SAMPLE *som_pulo;
+				som_pulo = al_load_sample("song/jump.wav");
+				if (!som_pulo) 
+				{
+					fprintf(stderr, "Could not load jump sound!\n");
+					exit(1);
+				}
+				if (!al_play_sample(som_pulo, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL)) {
+				              fprintf(stderr,
+				                 "al_play_sample_data failed, perhaps too many sounds\n");
+				           }
+			}
+			
+		}
 		else if(dir == DIREITA){
 			hero_ -> dx += CONSTANTE_X;
 			last_right = 1;
@@ -347,27 +420,46 @@ void move_side()
 }
 void delta_transform()
 {
+	//Deslocamento Horizontal
 	if (hero_ -> dx != 0)
 	{
 		if (hero_ -> dx > 0)
 		{
 			hero_ -> x += hero_ -> dx * 2;
-			hero_ -> dx -= CONSTANTE_X;  
+			hero_ -> dx -= CONSTANTE_X/4;  
 		}
 		else
 		{
 			hero_ -> x += hero_ -> dx * 2;
-			hero_ -> dx += CONSTANTE_X; 
+			hero_ -> dx += CONSTANTE_X/4; 
 		}
 	}
+	//Deslocamento Vertical
 	if (hero_ -> dy != 0)
 	{
-		if (hero_ -> dy < 0)
+		if (hero_ -> dy < 0 && cont_saltos < 20)
 		{
-			hero_ -> y += hero_ -> dy * 2;
+			jumping = 1;
+			hero_ -> y += hero_ -> dy/20;
+			cont_saltos++;
 		}
-		
+		else
+			jumping = 0;
 	}
+}
+void gravity_check()
+{
+	// PENSAR NUMA SOLUÇÃO PARA GRAVIDADE
+	int distancia_floor_hero = 0;
+	distancia_floor_hero = FLOOR - hero_ -> rh;
+
+	if ((hero_ -> y  + hero_ -> rh < FLOOR) && jumping == 0)
+	{
+		hero_ -> y += CONSTANTE_G;
+		hero_ -> dy += CONSTANTE_G;
+	}
+	if (hero_ -> y == FLOOR - hero_ -> rh)
+		cont_saltos = 0;
 }
 void write_obstacles()
 {
@@ -396,19 +488,7 @@ void write_obstacles()
 		
 	}
 }
-void gravity_check()
-{
-	/*int out = 1;
-	for (int i = 0; i < 15; i++)
-	{
-		
-	}*/
-	if (hero_ -> y < (FLOOR - hero_ -> rh))
-	{
-		hero_ -> y -= hero_ -> dy * 2 ;
-		hero_ -> dy += 2;
-	}
-}
+
 void CameraUpdate()
 {
 	al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
@@ -456,7 +536,7 @@ void state_play(ALLEGRO_FONT* font)
 	gravity_check();
 	//Altera o variação de velocidade do personagem
 	move_side();
-
+	//printf("%d e %d\n",hero_ -> y, hero_ ->dy );
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
     //Desenha o personagem controlavel
@@ -469,5 +549,16 @@ void state_play(ALLEGRO_FONT* font)
 }	
 void state_close()
 {
-	fim = 1;
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	end_game =al_load_bitmap(END_GAME_IMAGE);
+	if(!end_game)
+    {
+        fprintf(stderr, "failed to load end_game bitmap!\n");
+        exit(1);
+    }
+	al_draw_scaled_bitmap(end_game,0,0,800,500,0,0,800,500,0);
+	al_destroy_bitmap(end_game);
+	al_flip_display();
+
+	
 }
