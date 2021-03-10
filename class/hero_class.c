@@ -5,7 +5,8 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
-
+#define NUM_OBS 3
+#define NUM_MON 3 
 #define BACKGROUND_FILE "img/bg002.png"
 #define HERO_FILE 		"img/hero.png"
 #define RUN_RIGHT 		"img/run_right.png"
@@ -60,12 +61,12 @@ monster **monsters 	= NULL;
 int FLOOR;
 void create_objects()
 {
-	obstacles = malloc(15* sizeof(obstacles));
-	for (int i = 0; i < 15; i++)
+	obstacles = malloc(NUM_OBS* sizeof(obstacles));
+	for (int i = 0; i < NUM_OBS; i++)
 		obstacles[i] = malloc(10*sizeof(obstacles));
-	monsters = malloc(15*sizeof(monsters));
-	for (int i = 0; i < 15; i++)
-		monsters[i] = malloc(15*sizeof(monsters[i]));
+	monsters = malloc(NUM_MON*sizeof(monsters));
+	for (int i = 0; i < NUM_MON; i++)
+		monsters[i] = malloc(10*sizeof(monsters[i]));
 
 	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 522;
@@ -73,6 +74,7 @@ void create_objects()
 	obstacles[0] -> x = 200;
 	obstacles[0] -> rw = 50;
 	obstacles[0] -> rh = 50;
+	obstacles[0] -> stage = 0;
 	obstacles[0] -> y =	200 - obstacles[0] -> rh;
 	obstacles[0] -> dx,obstacles[0] -> dy = 0;
 
@@ -82,6 +84,7 @@ void create_objects()
 	obstacles[1] -> x = 600;
 	obstacles[1] -> rw = 50;
 	obstacles[1] -> rh = 50;
+	obstacles[1] -> stage = 0;
 	obstacles[1] -> y = GROUND - obstacles[1] -> rh;
 	obstacles[1] -> dx,obstacles[1] -> dy = 0;
 }
@@ -318,31 +321,36 @@ void hit()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+		if (stage == obstacles[i] -> stage)
 		{
-			//printf("%d\n",hero_ -> y );
-			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
+			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 			{
-				//Em cima da caixa
-				if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+				//printf("%d\n",hero_ -> y );
+				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 				{
-					printf("sai de cima fdp\n");
+					//Em cima da caixa
+					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+					{
+						FLOOR = obstacles[i] -> y;
+						hero_ -> dy = 0;
+						hero_ -> y = obstacles[i] -> y - hero_ -> rh;
+					}
 				}
-			}
-			else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
-			{
-				//Em baixo da caixa 
-			}
-			else if (FLOOR != obstacles[i] -> y -2)
-			{
-				if (hero_ -> x + hero_ -> rw <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
-					hero_ -> x = obstacles[i] -> x - hero_ -> rw;
-				else
-					hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
+				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
+				{
+					//Em baixo da caixa 
+				}
+				else if (FLOOR != obstacles[i] -> y -2)
+				{
+					if (hero_ -> x + hero_ -> rw <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
+						hero_ -> x = obstacles[i] -> x - hero_ -> rw;
+					else
+						hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
+				}
 			}
 		}
 	}
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < NUM_MON; i++)
 	{
 		if (monsters[i] -> live == 1 && stage == 1)
 		{
@@ -465,7 +473,7 @@ void write_obstacles()
 {
 	//Imprime os obstaculos existentes
 	if (stage == 0)
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < NUM_OBS; i++)
 			al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
 	if (stage == 1){
 		inicia_mobs();
@@ -505,7 +513,25 @@ void state_init(ALLEGRO_FONT* font)
 	FLOOR = GROUND;
 	estado = SERVINDO;
 }
-//Fũnção principal de gameplay
+void UpdateFloor()
+{
+	int out = 1;
+	if (hero_ -> y + hero_ -> rh == FLOOR)
+		hero_ -> dy = 0 ;
+	for (int i = 0; i < 2; i++)
+	{
+		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+		{
+			out = 0;
+		}		
+	}
+	if (out)
+	{
+		FLOOR = GROUND;
+		
+	}
+}
+//Função principal de gameplay
 void state_play(ALLEGRO_FONT* font)
 {
 	if (hero_ -> live == 0)
@@ -530,6 +556,8 @@ void state_play(ALLEGRO_FONT* font)
 
 	//Imprime o background
 	CameraUpdate();
+	//Atualiza floor
+	UpdateFloor();
     //Imprime obstaculos
     write_obstacles();
 	//Checagem da gravidade
@@ -537,14 +565,25 @@ void state_play(ALLEGRO_FONT* font)
 	//Altera o variação de velocidade do personagem
 	move_side();
 	//printf("%d e %d\n",hero_ -> y, hero_ ->dy );
+	char posY[50];
+	snprintf(posY,25,"Y: %d / DY: %d",hero_ -> y, hero_ -> dy);
+	char posX[50];
+	snprintf(posX,25,"X: %d / DX: %d",hero_ -> x, hero_ -> dx);
+	char chao[50];
+	snprintf(chao,25,"FLOOR: %d",FLOOR);
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
     //Desenha o personagem controlavel
 	draw_hero();
 	//Checa Hit
 	hit();
+	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0,text);
+	al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
+	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
+	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
 
-	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0, text);
+
+
 	al_flip_display();
 }	
 void state_close()
@@ -559,6 +598,4 @@ void state_close()
 	al_draw_scaled_bitmap(end_game,0,0,800,500,0,0,800,500,0);
 	al_destroy_bitmap(end_game);
 	al_flip_display();
-
-	
 }

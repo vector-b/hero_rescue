@@ -15,7 +15,8 @@ struct hero{
 struct obs{
 	int using;
 	int x,y;
-	short dx, dy;  
+	short dx, dy;
+	short stage;  
   	short w, h; 
   	short inside;
   	short rw,rh; //Valores após resize
@@ -59,6 +60,7 @@ void move_side();
 void gravity_check();
 void CameraUpdate();
 void cria_monstros_estruturas();
+void UpdateFloor();
 
 
 void state_init(ALLEGRO_FONT* font);
