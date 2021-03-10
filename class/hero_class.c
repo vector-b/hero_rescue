@@ -7,7 +7,11 @@
 #include "allegro5/allegro_acodec.h"
 #define NUM_OBS 3
 #define NUM_MON 3 
+//Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.png"
+#define END_GAME_IMAGE 	"img/end_game.png"
+#define GAME_MENU 		"img/hero_adventure.png"
+
 #define HERO_FILE 		"img/hero.png"
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
@@ -16,12 +20,16 @@
 #define MOB_IMAGE		"img/mob/"
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_SPACE		"img/space_ship/space_ship_rsz.png"
-#define END_GAME_IMAGE 	"img/end_game.png"
 
+
+#define JUMP_LEFT		"img/hero_left/jump/"
 #define JUMP			"img/hero/jump/"
+#define FALL_LEFT		"img/hero_left/fall/"
 #define FALL			"img/hero/fall/"
 
 #define HERO_IMAGE		"img/hero/"
+#define HERO_IMAGE_LEFT	"img/hero_left/"
+
 #define GROUND 435
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 160
@@ -32,6 +40,8 @@ int PONTUACAO = 0;
 int cont_saltos = 0; 
 int jumping = 0;
 ALLEGRO_BITMAP *background 		= NULL;
+ALLEGRO_BITMAP *menu 			= NULL;
+
 ALLEGRO_BITMAP *end_game 		= NULL;
 ALLEGRO_BITMAP *heroi 			= NULL;
 ALLEGRO_BITMAP *heroi_right 	= NULL;
@@ -218,7 +228,21 @@ void make_hero()
         fprintf(stderr, "failed to load hero bitmap!\n");
         exit(1);
     }
-    al_draw_scaled_bitmap(heroi,0,0,hero_ -> w,hero_-> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+}
+void make_menu()
+{
+	//Inicia o image_addon 
+	if(!al_init_image_addon())
+	{
+	    printf("couldn't initialize image addon\n");
+	}
+	//Carrega o background na memória
+	menu=al_load_bitmap(GAME_MENU);
+	if(!menu)
+    {
+        fprintf(stderr, "failed to load menu bitmap!\n");
+        exit(1);
+    }
 }
 void make_background()
 {
@@ -234,18 +258,13 @@ void make_background()
         fprintf(stderr, "failed to load background bitmap!\n");
         exit(1);
     }
-    //Imprime o background no fundo da tela
-    al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
 }
 void state_serve(ALLEGRO_EVENT *evento)
 {	
 }
 void draw_hero()
 {
-	if(last_right)
-		heroi = heroi_right;
-	else
-		heroi = heroi_left;
+
 	if (jumping)
 	{
 		int chosen = 1;
@@ -265,7 +284,11 @@ void draw_hero()
 		snprintf(filename, 12, "%d.png", chosen);
 
 		char path[100] = "";
-		strcat(path, JUMP);
+		if (last_right)
+			strcat(path, JUMP);
+		else
+			strcat(path, JUMP_LEFT);
+
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
 
@@ -279,7 +302,11 @@ void draw_hero()
 		snprintf(filename, 12, "%d.png", 0);
 
 		char path[100] = "";
-		strcat(path, FALL);
+		if(last_right)
+			strcat(path, FALL);
+		else
+			strcat(path, FALL_LEFT);
+
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
 
@@ -297,7 +324,10 @@ void draw_hero()
 		snprintf(filename, 12, "%d.png", num_sprite_hero);
 
 		char path[100] = "";
-		strcat(path, HERO_IMAGE);
+		if(last_right)
+			strcat(path, HERO_IMAGE);
+		else
+			strcat(path, HERO_IMAGE_LEFT);
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
 
@@ -496,7 +526,6 @@ void write_obstacles()
 		
 	}
 }
-
 void CameraUpdate()
 {
 	al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
@@ -504,11 +533,13 @@ void CameraUpdate()
 //Função dos states
 void state_init(ALLEGRO_FONT* font)
 {
+
 	create_objects();
 	make_background();
+	make_menu();
+	al_draw_scaled_bitmap(menu,0,0,800,500,0,0,800,500,0);
 	make_hero(hero_);
 	cria_monstros_estruturas();
-	al_draw_text(font, al_map_rgb(0, 104, 1), 280,100, 0, "PRESSIONE ENTER PARA JOGAR");
 	al_flip_display();
 	FLOOR = GROUND;
 	estado = SERVINDO;
@@ -571,6 +602,8 @@ void state_play(ALLEGRO_FONT* font)
 	snprintf(posX,25,"X: %d / DX: %d",hero_ -> x, hero_ -> dx);
 	char chao[50];
 	snprintf(chao,25,"FLOOR: %d",FLOOR);
+	char estagio[20];
+	snprintf(estagio,20,"STAGE: %d",stage);
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
     //Desenha o personagem controlavel
@@ -581,6 +614,8 @@ void state_play(ALLEGRO_FONT* font)
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
+	al_draw_text(font, al_map_rgb(255, 104, 1), 700,20, 0,estagio);
+
 
 
 
