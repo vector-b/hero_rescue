@@ -23,7 +23,8 @@
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_SPACE		"img/space_ship/space_ship_rsz.png"
 
-
+#define RUNNING_LEFT	"img/hero_left/running/"
+#define RUNNING_RIGHT	"img/hero/running/"
 #define JUMP_LEFT		"img/hero_left/jump/"
 #define JUMP			"img/hero/jump/"
 #define FALL_LEFT		"img/hero_left/fall/"
@@ -41,6 +42,7 @@
 int PONTUACAO = 0;
 int cont_saltos = 0; 
 int jumping = 0;
+int running = 1;
 ALLEGRO_BITMAP *background 		= NULL;
 ALLEGRO_BITMAP *menu 			= NULL;
 
@@ -349,15 +351,48 @@ void draw_hero()
 
 		al_destroy_bitmap(stand);
 	}
-	else if(hero_ -> dx > 0 ){
-		heroi_run_right = al_load_bitmap(RUN_RIGHT);
-		al_draw_scaled_bitmap(heroi_run_right,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
-		al_destroy_bitmap(heroi_run_right);
+	else if(hero_ -> dx > 0 )
+	{
+		int chosen = 1;
+		if (running <= 6)
+			chosen = running;
+		else
+			running = 1;
+		
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", chosen);
+
+		char path[100] = "";
+
+		strcat(path, RUNNING_RIGHT);
+
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		al_destroy_bitmap(stand);
 	}
 	else {
-		heroi_run_left	= al_load_bitmap(RUN_LEFT);
-		al_draw_scaled_bitmap(heroi_run_left,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
-		al_destroy_bitmap(heroi_run_left);
+		int chosen = 1;
+		if (running <= 6)
+			chosen = running;
+		else
+			running = 1;
+		
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", chosen);
+
+		char path[100] = "";
+
+		strcat(path, RUNNING_LEFT);
+
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		al_destroy_bitmap(stand);
 	}
 }
 void hit()
@@ -473,6 +508,7 @@ void delta_transform()
 	{
 		if (hero_ -> dx > 0)
 		{
+			running++;
 			hero_ -> x += hero_ -> dx * 2;
 			hero_ -> dx -= CONSTANTE_X/6;  
 		}
@@ -481,6 +517,10 @@ void delta_transform()
 			hero_ -> x += hero_ -> dx * 2;
 			hero_ -> dx += CONSTANTE_X/6; 
 		}
+	}
+	else
+	{
+		running = 1;
 	}
 	//Deslocamento Vertical
 	if (hero_ -> dy != 0)
@@ -498,6 +538,8 @@ void delta_transform()
 void gravity_check()
 {
 	// PENSAR NUMA SOLUÇÃO PARA GRAVIDADE
+	if (hero_ -> dy > 0)
+		hero_ -> dy =0;
 	int distancia_floor_hero = 0;
 	distancia_floor_hero = FLOOR - hero_ -> rh;
 
