@@ -53,7 +53,7 @@ int main()
     }
 
     //Puxa a música e inicia 
-    char filename[100] ="song/undertale.mp3";
+    /*char filename[100] ="song/undertale.mp3";
     sample_data = al_load_sample("song/dqv_zen.wav");
     if (!sample_data) 
     {
@@ -64,7 +64,7 @@ int main()
                   fprintf(stderr,
                      "al_play_sample_data failed, perhaps too many sounds\n");
                }
-
+*/
     //Inicia o Display
     disp = al_create_display(WIDTH, HEIGHT);
     if(!disp)
@@ -97,11 +97,18 @@ int main()
     estado = INICIO;
     al_start_timer(timer);
 
-    
+    double old_time = al_get_time();
+
     //Início do Loop Principal do programa
     while(!fim)
     {
-    	ALLEGRO_EVENT evento;
+
+      double new_time = al_get_time();
+      double delta = new_time - old_time;
+      fps = 1/(delta*1000);
+      old_time = new_time;
+      ALLEGRO_EVENT evento;
+
         al_wait_for_event(queue, &evento);
 
       
@@ -138,12 +145,16 @@ int main()
                 dir = DIREITA;
               else if (evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 dir = BAIXO;
-
+            }
+            else if (estado == FIMJOGO)
+            {
+              if(evento.keyboard.keycode == ALLEGRO_KEY_R)
+                estado = INICIO;
             }
         }
         else if(evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         	break;
-        
+
     }
     al_destroy_timer(timer);
     al_destroy_display(disp);

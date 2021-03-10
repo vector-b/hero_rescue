@@ -8,7 +8,9 @@
 #define NUM_OBS 3
 #define NUM_MON 3 
 //Imagens de Fundo
-#define BACKGROUND_FILE "img/bg002.png"
+#define BACKGROUND_FILE "img/bg002.bmp"
+#define BRIDGE 			"img/bridge.bmp"
+#define BRIDGE_STAGE	"img/bridge_stage.png"
 #define END_GAME_IMAGE 	"img/end_game.png"
 #define GAME_MENU 		"img/hero_adventure.png"
 
@@ -53,8 +55,8 @@ ALLEGRO_BITMAP *mob 			= NULL;
 ALLEGRO_BITMAP *mob_2			= NULL;
 ALLEGRO_BITMAP *stand 			= NULL;
 
-
-
+ALLEGRO_SAMPLE *som_pulo 		= NULL;
+ALLEGRO_SAMPLE *kill_sound		= NULL;
 
 int checa_sprite = 0;
 int num_sprite = 0;
@@ -63,7 +65,7 @@ int checa_sprite_hero =0;
 int num_sprite_hero = 1;
 int old_dx;
 int old_dy;
-int last_right = 0;
+int last_right = 1;
 int stage = 0;
 hero *hero_     	= NULL;
 obs **obstacles 	= NULL;
@@ -73,10 +75,10 @@ void create_objects()
 {
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
-		obstacles[i] = malloc(10*sizeof(obstacles));
+		obstacles[i] = malloc(15*sizeof(obstacles));
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
-		monsters[i] = malloc(10*sizeof(monsters[i]));
+		monsters[i] = malloc(15*sizeof(monsters[i]));
 
 	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 522;
@@ -115,13 +117,14 @@ void cria_monstros_estruturas()
 	monsters[0] -> x_dest = 600;
 	monsters[0] -> y_ini = 0;
 	monsters[0] -> y_dest = 0;
+	monsters[0] -> stage = 1;
 
 	monsters[1] -> using = 1;
 	monsters[1] -> type = 2;
 	monsters[1] -> live = 1;
 	monsters[1] -> w = 60;
 	monsters[1] -> h = 41;
-	monsters[1] -> x = 300;
+	monsters[1] -> x = 200;
 	monsters[1] -> rw = 60;
 	monsters[1] -> rh = 41;
 	monsters[1] -> y = 200;
@@ -132,10 +135,30 @@ void cria_monstros_estruturas()
 	monsters[1] -> x_dest = 800 - monsters[1] -> w;
 	monsters[1] -> y_ini = 0;
 	monsters[1] -> y_dest = 400;
+	monsters[1] -> stage = 1;
+/*
+	monsters[2] -> using = 1;
+	monsters[2] -> type = 1;
+	monsters[2] -> live = 1;
+	monsters[2] -> w = 315;
+	monsters[2] -> h = 329;
+	monsters[2] -> x = 600;
+	monsters[2] -> rw = 50;
+	monsters[2] -> rh = 50;
+	monsters[2] -> y = GROUND - monsters[0] -> rh;
+	monsters[2] -> dx,monsters[0] -> dy = 0;
+	monsters[2] -> vai = 0;
+	monsters[2] -> x_ini = 300;
+	monsters[2] -> x_dest = 600;
+	monsters[2] -> y_ini = 0;
+	monsters[2] -> y_dest = 0;
+	monsters[2] -> stage = 2;*/
+
+
 }
 void inicia_mobs()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < NUM_MON; i++)
 	{
 		//Muda a direção do deslocamento horizontal
 		if (monsters[i] -> x > monsters[i] -> x_dest)
@@ -164,11 +187,6 @@ void inicia_mobs()
 				monsters[i] -> y--;
 		}
 		
-
-
-
-
-
 		if (monsters[i] -> type == 1)
 		{
 			checa_sprite++;
@@ -209,25 +227,15 @@ void make_hero()
   	hero_ -> h = 29;
   	hero_ -> rw = 45;
   	hero_ -> rh = 65;
-  	hero_ -> x = 700;
+  	hero_ -> x = 10;
 	hero_ -> y = GROUND - hero_ -> rh ;  
-	heroi_right 	= al_load_bitmap(HERO_FILE);
-	heroi_run_right = al_load_bitmap(RUN_RIGHT);
-	heroi_run_left	= al_load_bitmap(RUN_LEFT);
-	heroi_left 		= al_load_bitmap(H_LEFT);
+
 	brick = al_load_bitmap(BRICK_FILE);
 	if (!brick)
 	{
 		fprintf(stderr, "Não leu o brick file" );
 		exit(1);
 	}
-	heroi = heroi_right;
-
-  	if(!heroi)
-    {
-        fprintf(stderr, "failed to load hero bitmap!\n");
-        exit(1);
-    }
 }
 void make_menu()
 {
@@ -264,7 +272,6 @@ void state_serve(ALLEGRO_EVENT *evento)
 }
 void draw_hero()
 {
-
 	if (jumping)
 	{
 		int chosen = 1;
@@ -342,10 +349,16 @@ void draw_hero()
 
 		al_destroy_bitmap(stand);
 	}
-	else if(hero_ -> dx > 0 )
+	else if(hero_ -> dx > 0 ){
+		heroi_run_right = al_load_bitmap(RUN_RIGHT);
 		al_draw_scaled_bitmap(heroi_run_right,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
-	else 
+		al_destroy_bitmap(heroi_run_right);
+	}
+	else {
+		heroi_run_left	= al_load_bitmap(RUN_LEFT);
 		al_draw_scaled_bitmap(heroi_run_left,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+		al_destroy_bitmap(heroi_run_left);
+	}
 }
 void hit()
 {
@@ -382,7 +395,7 @@ void hit()
 	}
 	for (int i = 0; i < NUM_MON; i++)
 	{
-		if (monsters[i] -> live == 1 && stage == 1)
+		if (monsters[i] -> live == 1 && stage == monsters[i]-> stage)
 		{
 			if ((hero_ -> x + hero_ -> rw >= monsters[i] -> x) && (hero_ -> x <= monsters[i] -> x + monsters[i] -> rw - 1))
 			{
@@ -393,7 +406,6 @@ void hit()
 					if ((hero_ -> y + hero_ -> rh <=  monsters[i] -> y ) && (hero_ -> y + hero_ -> rh > monsters[i] -> y - 5) ) 
 					{
 						monsters[i] -> live = 0;
-						ALLEGRO_SAMPLE *kill_sound;
 						kill_sound = al_load_sample("song/kill.wav");
 						if (!kill_sound) 
 						{
@@ -404,7 +416,6 @@ void hit()
 						              fprintf(stderr,
 						                 "al_play_sample_data failed, perhaps too many sounds\n");
 						           }
-
 						PONTUACAO+=5;
 					}
 				}
@@ -433,14 +444,13 @@ void move_side()
 			if (!jumping)
 			{
 				hero_ -> dy -= CONSTANTE_Y;
-				ALLEGRO_SAMPLE *som_pulo;
 				som_pulo = al_load_sample("song/jump.wav");
 				if (!som_pulo) 
 				{
 					fprintf(stderr, "Could not load jump sound!\n");
 					exit(1);
 				}
-				if (!al_play_sample(som_pulo, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL)) {
+				if (!al_play_sample(som_pulo, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
 				              fprintf(stderr,
 				                 "al_play_sample_data failed, perhaps too many sounds\n");
 				           }
@@ -464,12 +474,12 @@ void delta_transform()
 		if (hero_ -> dx > 0)
 		{
 			hero_ -> x += hero_ -> dx * 2;
-			hero_ -> dx -= CONSTANTE_X/4;  
+			hero_ -> dx -= CONSTANTE_X/6;  
 		}
 		else
 		{
 			hero_ -> x += hero_ -> dx * 2;
-			hero_ -> dx += CONSTANTE_X/4; 
+			hero_ -> dx += CONSTANTE_X/6; 
 		}
 	}
 	//Deslocamento Vertical
@@ -505,9 +515,10 @@ void write_obstacles()
 	if (stage == 0)
 		for (int i = 0; i < NUM_OBS; i++)
 			al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
-	if (stage == 1){
-		inicia_mobs();
-		for (int i = 0; i < 2; i++)
+	inicia_mobs();
+	for (int i = 0; i < NUM_MON; i++)
+	{
+		if (stage == monsters[i] -> stage)
 		{
 			if (monsters[i] -> live == 1)
 			{
@@ -525,24 +536,23 @@ void write_obstacles()
 		}
 		
 	}
+		
 }
 void CameraUpdate()
 {
-	al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
-}
-//Função dos states
-void state_init(ALLEGRO_FONT* font)
-{
-
-	create_objects();
-	make_background();
-	make_menu();
-	al_draw_scaled_bitmap(menu,0,0,800,500,0,0,800,500,0);
-	make_hero(hero_);
-	cria_monstros_estruturas();
-	al_flip_display();
-	FLOOR = GROUND;
-	estado = SERVINDO;
+	if (stage != 3)
+	{
+		background=al_load_bitmap(BACKGROUND_FILE);
+		al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
+		al_destroy_bitmap(background);
+	}
+	else{
+		ALLEGRO_BITMAP *bridge_back = NULL;
+		bridge_back = al_load_bitmap(BRIDGE_STAGE);
+		al_draw_scaled_bitmap(bridge_back,0,0,800,500,0,0,800,500,0);
+		al_destroy_bitmap(bridge_back);
+	}
+	
 }
 void UpdateFloor()
 {
@@ -562,8 +572,7 @@ void UpdateFloor()
 		
 	}
 }
-//Função principal de gameplay
-void state_play(ALLEGRO_FONT* font)
+void stages_()
 {
 	if (hero_ -> live == 0)
 	{
@@ -576,21 +585,42 @@ void state_play(ALLEGRO_FONT* font)
 		hero_ -> dy = 0;
 		hero_ -> dx = 0;
 	}
+}
+//Função dos states
+void state_init(ALLEGRO_FONT* font)
+{
+	create_objects();
+	make_background();
+	al_destroy_bitmap(background);
+	make_menu();
+	al_draw_scaled_bitmap(menu,0,0,800,500,0,0,800,500,0);
+	al_destroy_bitmap(menu);
+	make_hero(hero_);
+	//cria_monstros_estruturas();
+	al_flip_display();
+	FLOOR = GROUND;
+	estado = SERVINDO;
+}
+
+//Função principal de gameplay
+void state_play(ALLEGRO_FONT* font)
+{
+	
 	//Limpa a tela
 	al_clear_to_color(al_map_rgb(0, 0, 0));
+	stages_();
 	//Imprime score
 	char score[25] = "";
 	snprintf(score, 25, "%d", PONTUACAO);
 	char text[10] = "SCORE: ";
 	strcat(text,score);
 	//printf("%s\n",text);
-
 	//Imprime o background
 	CameraUpdate();
 	//Atualiza floor
 	UpdateFloor();
     //Imprime obstaculos
-    write_obstacles();
+    //write_obstacles();
 	//Checagem da gravidade
 	gravity_check();
 	//Altera o variação de velocidade do personagem
@@ -604,18 +634,29 @@ void state_play(ALLEGRO_FONT* font)
 	snprintf(chao,25,"FLOOR: %d",FLOOR);
 	char estagio[20];
 	snprintf(estagio,20,"STAGE: %d",stage);
+	char fps_demo[50];
+	snprintf(fps_demo,25,"%f",fps);
+	
+
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
     //Desenha o personagem controlavel
 	draw_hero();
 	//Checa Hit
-	hit();
+	//hit();
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0,text);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,20, 0,estagio);
-
+	//al_draw_text(font, al_map_rgb(255, 104, 1), 700,30, 0,fps_demo);
+	if (stage == 3)
+	{
+		ALLEGRO_BITMAP *bridge_img = NULL;
+		bridge_img = al_load_bitmap(BRIDGE);
+		al_draw_scaled_bitmap(bridge_img,0,0,800,500,0,0,800,500,0);
+		al_destroy_bitmap(bridge_img);
+	}
 
 
 

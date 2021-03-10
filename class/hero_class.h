@@ -29,6 +29,7 @@ struct monster
 	int x,y;
 	int vai;
 	int sobe;
+	short stage;
 	int x_ini,x_dest;
 	int y_ini,y_dest;
 	short dx, dy;  
@@ -45,6 +46,7 @@ typedef struct hero hero;
 typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 state estado;
 typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
+double fps;
 direcao dir;
 int fim;
 
@@ -61,6 +63,7 @@ void gravity_check();
 void CameraUpdate();
 void cria_monstros_estruturas();
 void UpdateFloor();
+void stages_();
 
 
 void state_init(ALLEGRO_FONT* font);
