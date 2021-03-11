@@ -20,7 +20,7 @@
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
-#define BRICK_FILE 		"img/moss_tile.png"
+#define OBJ_FOLDER 		"img/objects/"
 #define MOB_IMAGE		"img/mob/"
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_FLY			"img/fly/"
@@ -93,13 +93,7 @@ void make_hero()
   	hero_ -> rh = 65;
   	hero_ -> x = 10;
 	hero_ -> y = GROUND - hero_ -> rh ;  
-	/*
-	brick = al_load_bitmap(BRICK_FILE);
-	if (!brick)
-	{
-		fprintf(stderr, "Não leu o brick file" );
-		exit(1);
-	}*/
+	
 }
 //Inicia o menu, estágio antes de começar a jogar
 void make_menu()
@@ -132,10 +126,10 @@ void create_objects()
 {
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
-		obstacles[i] = malloc(15*sizeof(obstacles));
+		obstacles[i] = malloc(200*sizeof(obstacles));
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
-		monsters[i] = malloc(15*sizeof(monsters[i]));
+		monsters[i] = malloc(200*sizeof(monsters[i]));
 
 	obstacles[0] -> using = 0;
 	obstacles[0] -> w = 522;
@@ -147,13 +141,15 @@ void create_objects()
 	obstacles[0] -> y =	200 - obstacles[0] -> rh;
 	obstacles[0] -> dx,obstacles[0] -> dy = 0;
 
-	obstacles[1] -> using = 0;
-	obstacles[1] -> w = 522;
-	obstacles[1] -> h = 522;
+	obstacles[1] -> using = 1;
+	obstacles[1] -> w = 106;
+	obstacles[1] -> h = 106;
 	obstacles[1] -> x = 600;
 	obstacles[1] -> rw = 50;
 	obstacles[1] -> rh = 50;
-	obstacles[1] -> stage = 0;
+	obstacles[1] -> stage = 1;
+	obstacles[1] -> name_file[0] = '\0';
+	strcat(obstacles[1] -> name_file, "crate.bmp");
 	obstacles[1] -> y = GROUND - obstacles[1] -> rh;
 	obstacles[1] -> dx,obstacles[1] -> dy = 0;
 }
@@ -165,14 +161,14 @@ void cria_monstros_estruturas()
 	monsters[0] -> live = 1;
 	monsters[0] -> w = 315;
 	monsters[0] -> h = 329;
-	monsters[0] -> x = 600;
+	monsters[0] -> x = 550;
 	monsters[0] -> rw = 50;
 	monsters[0] -> rh = 50;
 	monsters[0] -> y = GROUND - monsters[0] -> rh;
 	monsters[0] -> dx,monsters[0] -> dy = 0;
 	monsters[0] -> vai = 0;
 	monsters[0] -> x_ini = 300;
-	monsters[0] -> x_dest = 600;
+	monsters[0] -> x_dest = 550;
 	monsters[0] -> y_ini = 0;
 	monsters[0] -> y_dest = 0;
 	monsters[0] -> stage = 1;
@@ -290,7 +286,7 @@ void inicia_mobs()
 					strcat(path, MOB_FLY_RIGHT);
 				else
 					strcat(path, MOB_FLY);
-				
+
 				strcat(path, filename);
 				mob_2 = al_load_bitmap(path);
 				
@@ -303,7 +299,6 @@ void inicia_mobs()
 	}
 }
 
-
 /* Funções usadas para imprimir na tela heroi/estruturas*/
 
 //Função que escreve monstros e estruturas na tela
@@ -312,7 +307,20 @@ void write_obstacles()
 	//Imprime os obstaculos existentes
 	for (int i = 0; i < NUM_OBS; i++)
 		if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
-			al_draw_scaled_bitmap(brick,0,0,522,522,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+		{	
+			char path[100] = "";
+			strcat(path, OBJ_FOLDER);
+			strcat(path,obstacles[i] -> name_file);
+			ALLEGRO_BITMAP *obj = NULL;
+			obj = al_load_bitmap(path);
+			if (!obj)
+			{
+				fprintf(stderr, "Problemas na leitura de um bmp!\n" );
+				exit(1);
+			}
+			al_draw_scaled_bitmap(obj,0,0,obstacles[i] -> w,obstacles[i] -> h,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+			///al_destroy_bitmap(obj);
+		}
 		
 	inicia_mobs();
 	for (int i = 0; i < NUM_MON; i++)
@@ -700,7 +708,16 @@ void hit()
 	}
 }
 
+void desalocador()
+{
+	for (int i = 0; i < NUM_MON; i++)
+		free(monsters[i]);
+	free(monsters);
 
+	for (int i = 0; i < NUM_OBS; i++)
+		free(obstacles[i]);
+	free(obstacles);
+}
 /*Funções dos estados do */
 
 void state_serve(ALLEGRO_EVENT *evento)

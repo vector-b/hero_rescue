@@ -19,6 +19,7 @@ struct obs{
 	short stage;  
   	short w, h; 
   	short inside;
+  	char name_file[100];
   	short rw,rh; //Valores após resize
 };
 struct monster
@@ -64,6 +65,7 @@ void CameraUpdate();
 void cria_monstros_estruturas();
 void UpdateFloor();
 void stages_();
+void desalocador();
 
 
 void state_init(ALLEGRO_FONT* font);
