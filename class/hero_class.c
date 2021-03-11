@@ -144,7 +144,7 @@ void create_objects()
 	obstacles[1] -> using = 1;
 	obstacles[1] -> w = 106;
 	obstacles[1] -> h = 106;
-	obstacles[1] -> x = 600;
+	obstacles[1] -> x = 550;
 	obstacles[1] -> rw = 50;
 	obstacles[1] -> rh = 50;
 	obstacles[1] -> stage = 1;
@@ -152,6 +152,18 @@ void create_objects()
 	strcat(obstacles[1] -> name_file, "crate.bmp");
 	obstacles[1] -> y = GROUND - obstacles[1] -> rh;
 	obstacles[1] -> dx,obstacles[1] -> dy = 0;
+
+	obstacles[2] -> using = 1;
+	obstacles[2] -> w = 106;
+	obstacles[2] -> h = 106;
+	obstacles[2] -> x = 600;
+	obstacles[2] -> rw = 50;
+	obstacles[2] -> rh = 50;
+	obstacles[2] -> stage = 1;
+	obstacles[2] -> name_file[0] = '\0';
+	strcat(obstacles[2] -> name_file, "crate.bmp");
+	obstacles[2] -> y = GROUND - obstacles[2] -> rh;
+	obstacles[2] -> dx,obstacles[2] -> dy = 0;
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
@@ -561,11 +573,26 @@ void UpdateFloor()
 	int out = 1;
 	if (hero_ -> y + hero_ -> rh == FLOOR)
 		hero_ -> dy = 0 ;
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < NUM_OBS; i++)
 	{
+
 		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 		{
-			out = 0;
+			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
+				{
+					out = 1;
+					//Em cima da caixa
+					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+					{
+						out = 0;
+					}
+				}
+				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
+				{
+					//printf("xd\n");
+					//Em baixo da caixa
+					out = 1; 
+				}
 		}		
 	}
 	if (out)
@@ -626,11 +653,11 @@ void stages_()
 //Checa colisão com outras estruturas/monstros
 void hit()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < NUM_OBS; i++)
 	{
 		if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
 		{
-			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x + 1) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 			{
 				//printf("%d\n",hero_ -> y );
 				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
@@ -641,16 +668,25 @@ void hit()
 						FLOOR = obstacles[i] -> y;
 						hero_ -> dy = 0;
 						hero_ -> y = obstacles[i] -> y - hero_ -> rh;
+						draw_hero();
 					}
 				}
 				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
 				{
-					//Em baixo da caixa 
+					//printf("xd\n");
+					//Em baixo da caixa
+					if (hero_ -> y == obstacles[i] -> y + obstacles[i]-> rh)
+					{
+						hero_ -> y = obstacles[i] -> y + obstacles[i]-> rh - 1;
+					}
 				}
-				else if (FLOOR != obstacles[i] -> y -2)
+				else if (!((FLOOR <=  obstacles[i] -> y ) && (FLOOR > obstacles[i] -> y - 5)))
 				{
-					if (hero_ -> x + hero_ -> rw <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
+					//printf("%d\n",i);
+					if (hero_ -> x <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
+					{
 						hero_ -> x = obstacles[i] -> x - hero_ -> rw;
+					}
 					else
 						hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
 				}
