@@ -13,6 +13,8 @@
 #define BRIDGE_STAGE	"img/bridge_stage.png"
 #define END_GAME_IMAGE 	"img/end_game.png"
 #define GAME_MENU 		"img/hero_adventure.png"
+#define BOA_RIGHT 		"img/death.png"
+#define BOA_LEFT        "img/safety.png"
 
 #define HERO_FILE 		"img/hero.png"
 #define RUN_RIGHT 		"img/run_right.png"
@@ -59,6 +61,7 @@ ALLEGRO_BITMAP *stand 			= NULL;
 
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
+ALLEGRO_SAMPLE *death_sound		= NULL;
 
 int checa_sprite = 0;
 int num_sprite = 0;
@@ -197,7 +200,7 @@ void inicia_mobs()
 				num_sprite++;
 
 			char filename[100] = "";
-			snprintf(filename, 12, "%d.png", num_sprite);
+			snprintf(filename, 12, "%d.bmp", num_sprite);
 		
 
 			char path[100] = "";
@@ -460,7 +463,18 @@ void hit()
 				}
 				else
 				{
+
 					hero_ -> live = 0;
+					death_sound = al_load_sample("song/lego.wav");
+					if (!death_sound) 
+					{
+						fprintf(stderr, "Could not load death sound!\n");
+						exit(1);
+					}
+					if (!al_play_sample(death_sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
+					              fprintf(stderr,
+					                 "al_play_sample_data failed, perhaps too many sounds\n");
+					           }
 				}
 			}
 		}
@@ -582,6 +596,7 @@ void write_obstacles()
 }
 void CameraUpdate()
 {
+
 	if (stage != 3)
 	{
 		background=al_load_bitmap(BACKGROUND_FILE);
@@ -593,8 +608,7 @@ void CameraUpdate()
 		bridge_back = al_load_bitmap(BRIDGE_STAGE);
 		al_draw_scaled_bitmap(bridge_back,0,0,800,500,0,0,800,500,0);
 		al_destroy_bitmap(bridge_back);
-	}
-	
+	}	
 }
 void UpdateFloor()
 {
@@ -627,6 +641,14 @@ void stages_()
 		hero_ -> dy = 0;
 		hero_ -> dx = 0;
 	}
+	if (hero_ -> x < 0 && stage != 0 )
+	{
+		stage--;
+		hero_ -> x = 750;
+		hero_ -> y = GROUND - hero_ -> rh;
+		hero_ -> dy = 0;
+		hero_ -> dx = 0;
+	}
 }
 //Função dos states
 void state_init(ALLEGRO_FONT* font)
@@ -643,7 +665,6 @@ void state_init(ALLEGRO_FONT* font)
 	FLOOR = GROUND;
 	estado = SERVINDO;
 }
-
 //Função principal de gameplay
 void state_play(ALLEGRO_FONT* font)
 {
@@ -698,6 +719,20 @@ void state_play(ALLEGRO_FONT* font)
 		bridge_img = al_load_bitmap(BRIDGE);
 		al_draw_scaled_bitmap(bridge_img,0,0,800,500,0,0,800,500,0);
 		al_destroy_bitmap(bridge_img);
+	}
+	if (stage == 0)
+	{
+		ALLEGRO_BITMAP *board_left = NULL;
+		ALLEGRO_BITMAP *board_right = NULL;
+
+		board_left = al_load_bitmap(BOA_LEFT);
+		board_right = al_load_bitmap(BOA_RIGHT);
+
+		al_draw_scaled_bitmap(board_left,0,0,70,70,150,GROUND-70,70,70,0);
+		al_draw_scaled_bitmap(board_right,0,0,70,70,650,GROUND-70,70,70,0);
+
+		al_destroy_bitmap(board_left);
+		al_destroy_bitmap(board_right);
 	}
 
 
