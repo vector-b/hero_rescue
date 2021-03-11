@@ -523,12 +523,13 @@ void delta_transform()
 		if (hero_ -> dx > 0)
 		{
 			running++;
-			hero_ -> x += hero_ -> dx * 2;
+			hero_ -> x += hero_ -> dx;
 			hero_ -> dx -= CONSTANTE_X/6;  
 		}
 		else
 		{
-			hero_ -> x += hero_ -> dx * 2;
+			running++;
+			hero_ -> x += hero_ -> dx;
 			hero_ -> dx += CONSTANTE_X/6; 
 		}
 	}
@@ -641,13 +642,19 @@ void stages_()
 		hero_ -> dy = 0;
 		hero_ -> dx = 0;
 	}
-	if (hero_ -> x < 0 && stage != 0 )
+	if (hero_ -> x < 0 )
 	{
-		stage--;
-		hero_ -> x = 750;
-		hero_ -> y = GROUND - hero_ -> rh;
-		hero_ -> dy = 0;
-		hero_ -> dx = 0;
+		if(stage != 0)
+		{
+			stage--;
+			hero_ -> x = 750;
+			hero_ -> y = GROUND - hero_ -> rh;
+			hero_ -> dy = 0;
+			hero_ -> dx = 0;
+		}
+		else
+			hero_ -> x = 0;
+		
 	}
 }
 //Função dos states
@@ -703,6 +710,20 @@ void state_play(ALLEGRO_FONT* font)
 
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
+	if (stage == 0)
+	{
+		ALLEGRO_BITMAP *board_left = NULL;
+		ALLEGRO_BITMAP *board_right = NULL;
+
+		board_left = al_load_bitmap(BOA_LEFT);
+		board_right = al_load_bitmap(BOA_RIGHT);
+
+		al_draw_scaled_bitmap(board_left,0,0,70,70,150,GROUND-70,70,70,0);
+		al_draw_scaled_bitmap(board_right,0,0,70,70,650,GROUND-70,70,70,0);
+
+		al_destroy_bitmap(board_left);
+		al_destroy_bitmap(board_right);
+	}
     //Desenha o personagem controlavel
 	draw_hero();
 	//Checa Hit
@@ -720,20 +741,7 @@ void state_play(ALLEGRO_FONT* font)
 		al_draw_scaled_bitmap(bridge_img,0,0,800,500,0,0,800,500,0);
 		al_destroy_bitmap(bridge_img);
 	}
-	if (stage == 0)
-	{
-		ALLEGRO_BITMAP *board_left = NULL;
-		ALLEGRO_BITMAP *board_right = NULL;
-
-		board_left = al_load_bitmap(BOA_LEFT);
-		board_right = al_load_bitmap(BOA_RIGHT);
-
-		al_draw_scaled_bitmap(board_left,0,0,70,70,150,GROUND-70,70,70,0);
-		al_draw_scaled_bitmap(board_right,0,0,70,70,650,GROUND-70,70,70,0);
-
-		al_destroy_bitmap(board_left);
-		al_destroy_bitmap(board_right);
-	}
+	
 
 
 
