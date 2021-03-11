@@ -50,7 +50,12 @@ int main()
 	{
       fprintf(stderr, "Could not set up voice and mixer.\n");
       return 1;
-    }
+  }
+  if(!al_init_image_addon())
+  {
+      fprintf(stderr,"couldn't initialize image addon\n");
+      return 1;
+  }
 
     //Puxa a música e inicia 
     /*char filename[100] ="song/undertale.mp3";
@@ -97,16 +102,11 @@ int main()
     estado = INICIO;
     al_start_timer(timer);
 
-    double old_time = al_get_time();
 
     //Início do Loop Principal do programa
     while(!fim)
     {
-
-      double new_time = al_get_time();
-      double delta = new_time - old_time;
-      fps = 1/(delta*1000);
-      old_time = new_time;
+      double old_time = al_get_time();
       ALLEGRO_EVENT evento;
 
         al_wait_for_event(queue, &evento);
@@ -114,6 +114,10 @@ int main()
       
     	if(evento.type == ALLEGRO_EVENT_TIMER)
     	{
+         /* double new_time = al_get_time();
+          double delta = new_time - old_time;
+          fps = delta*6000;
+          old_time = new_time;*/
           	switch(estado)
           	{
           		case INICIO:
