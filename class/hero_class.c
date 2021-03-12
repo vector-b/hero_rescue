@@ -6,7 +6,7 @@
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
 #define NUM_OBS 20
-#define NUM_MON 5 
+#define NUM_MON 6 
 //Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.bmp"
 #define BRIDGE 			"img/bridge.bmp"
@@ -26,6 +26,8 @@
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_FLY			"img/fly/"
 #define MOB_FLY_RIGHT	"img/fly_right/"
+#define GHOST			"img/ghost/"
+#define GHOST_RIGHT		"img/ghost_right/"
 #define MOB_BAT			"img/bat/"
 #define FLOOR_STG3		"img/stage_3/floor_bridge.png"
 
@@ -63,8 +65,10 @@ ALLEGRO_BITMAP *brick 			= NULL;
 ALLEGRO_BITMAP *mob 			= NULL;
 ALLEGRO_BITMAP *mob_2			= NULL;
 ALLEGRO_BITMAP *mob_3			= NULL;
+ALLEGRO_BITMAP *mob_4			= NULL;
 ALLEGRO_BITMAP *stand 			= NULL;
 
+ALLEGRO_SAMPLE *background_sound;
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
@@ -243,10 +247,6 @@ void create_objects()
 	strcat(obstacles[8] -> name_file, "brick_5.png");
 	obstacles[8] -> y = 435;
 	obstacles[8] -> dx,obstacles[8] -> dy = 0;
-
-
-
-
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
@@ -254,11 +254,12 @@ void cria_monstros_estruturas()
 
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
-		monsters[i] = malloc(1000*sizeof(monsters[i]));
+		monsters[i] = malloc(3000*sizeof(monsters[i]));
 
 	monsters[0] -> using = 1;
 	monsters[0] -> type = 1;
 	monsters[0] -> live = 1;
+	monsters[0] -> life = 2;
 	monsters[0] -> w = 315;
 	monsters[0] -> h = 329;
 	monsters[0] -> x = 550;
@@ -276,6 +277,7 @@ void cria_monstros_estruturas()
 	monsters[1] -> using = 1;
 	monsters[1] -> type = 2;
 	monsters[1] -> live = 1;
+	monsters[1] -> life = 1;
 	monsters[1] -> w = 60;
 	monsters[1] -> h = 51;
 	monsters[1] -> x = 200;
@@ -296,6 +298,7 @@ void cria_monstros_estruturas()
   	monsters[2] -> using = 1;
 	monsters[2] -> type = 3;
 	monsters[2] -> live = 1;
+	monsters[2] -> life = 1;
 	monsters[2] -> w = 14;
 	monsters[2] -> h = 11;
 	monsters[2] -> x = 200;
@@ -316,6 +319,7 @@ void cria_monstros_estruturas()
   	monsters[3] -> using = 1;
 	monsters[3] -> type = 3;
 	monsters[3] -> live = 1;
+	monsters[3] -> life = 1;
 	monsters[3] -> w = 14;
 	monsters[3] -> h = 11;
 	monsters[3] -> x = 540;
@@ -332,6 +336,50 @@ void cria_monstros_estruturas()
 	monsters[3] -> stage = 2;
 	monsters[3] -> checa_sprite = 0;
   	monsters[3] -> num_sprite = 0;
+
+  	monsters[4] -> using = 1;
+	monsters[4] -> type = 3;
+	monsters[4] -> live = 1;
+	monsters[4] -> life = 1;
+	monsters[4] -> w = 14;
+	monsters[4] -> h = 11;
+	monsters[4] -> x = 540;
+	monsters[4] -> rw = 28;
+	monsters[4] -> rh = 22;
+	monsters[4] -> y = 300;
+	monsters[4] -> dx,monsters[4] -> dy = 0;
+	monsters[4] -> vai = 0;
+	monsters[4] -> sobe = 0;
+	monsters[4] -> x_ini = 500;
+	monsters[4] -> x_dest = 800 - monsters[4] -> rw;
+	monsters[4] -> y_ini = 0;
+	monsters[4] -> y_dest = 0;
+	monsters[4] -> stage = 2;
+	monsters[4] -> checa_sprite = 0;
+  	monsters[4] -> num_sprite = 0;
+
+  	monsters[5] -> using = 1;
+	monsters[5] -> type = 4;
+	monsters[5] -> live = 1;
+	monsters[5] -> life = 1;
+	monsters[5] -> w = 396;
+	monsters[5] -> h = 582;
+	monsters[5] -> x = 540;
+	monsters[5] -> rw = 70;
+	monsters[5] -> rh = 103;
+	monsters[5] -> y = 200;
+	monsters[5] -> dx,monsters[4] -> dy = 0;
+	monsters[5] -> vai = 0;
+	monsters[5] -> sobe = 0;
+	monsters[5] -> x_ini = 200;
+	monsters[5] -> x_dest = 800 - monsters[4] -> rw;
+	monsters[5] -> y_ini = 0;
+	monsters[5] -> y_dest = 0;
+	monsters[5] -> stage = 3;
+	monsters[5] -> checa_sprite = 0;
+  	monsters[5] -> num_sprite = 0;
+
+
 	/*
 	monsters[2] -> using = 1;
 	monsters[2] -> type = 1;
@@ -466,7 +514,32 @@ void inicia_mobs()
 				
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
-			}	
+			}
+			else if (monsters[i] -> type == 4)
+			{
+				monsters[i] -> checa_sprite++;
+
+				if((monsters[i] -> checa_sprite % 3) == 0 )
+					monsters[i] -> num_sprite++;
+
+				if (monsters[i] -> num_sprite >= 9)
+					monsters[i] -> num_sprite = 0;
+
+				char filename[50] = "";
+				snprintf(filename, 12, "%d.png", monsters[i] -> num_sprite);;
+
+				char path[100] = "";
+				if (monsters[i] -> vai)
+					strcat(path, GHOST_RIGHT);
+				else
+					strcat(path, GHOST);
+
+				strcat(path, filename);
+				mob_4 = al_load_bitmap(path);
+				
+				if (monsters[i] -> checa_sprite == 100)
+					monsters[i] -> checa_sprite = 0;
+			}
 		}
 	}
 	for (int i = 0; i < NUM_OBS; i++)
@@ -747,7 +820,8 @@ void delta_transform()
 
 void morrer()
 {
-	death_sound = al_load_sample("song/lego.wav");
+	al_stop_samples();
+	death_sound = al_load_sample("song/death_sound.wav");
 					if (!death_sound) 
 					{
 						fprintf(stderr, "Could not load death sound!\n");
@@ -757,6 +831,7 @@ void morrer()
 					              fprintf(stderr,
 					                 "al_play_sample_data failed, perhaps too many sounds\n");
 					           }
+	
 
 }
 //Simula uma gravidade que puxa o heroi em situações necessárias
@@ -927,19 +1002,27 @@ void hit()
 					//Em cima da caixa
 					if ((hero_ -> y + hero_ -> rh <=  monsters[i] -> y ) && (hero_ -> y + hero_ -> rh > monsters[i] -> y - 5) ) 
 					{
-						monsters[i] -> live = 0;
-						kill_sound = al_load_sample("song/kill.wav");
-						if (!kill_sound) 
+						monsters[i] -> life--;
+						if (monsters[i] -> life == 0 )
 						{
-							fprintf(stderr, "Could not load kill sound!\n");
-							exit(1);
+							monsters[i] -> live = 0;
+							kill_sound = al_load_sample("song/kill.wav");
+							if (!kill_sound) 
+							{
+								fprintf(stderr, "Could not load kill sound!\n");
+								exit(1);
+							}
+							if (!al_play_sample(kill_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL)) {
+							              fprintf(stderr,
+							                 "al_play_sample_data failed, perhaps too many sounds\n");
+							           }
+							PONTUACAO+=5;
 						}
-						if (!al_play_sample(kill_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL)) {
-						              fprintf(stderr,
-						                 "al_play_sample_data failed, perhaps too many sounds\n");
-						           }
-						PONTUACAO+=5;
+						else
+							hero_ -> x += monsters[i] -> rw;
+						
 					}
+
 				}
 				else if((hero_ -> y > monsters[i] -> y + monsters[i] -> rh))
 				{
@@ -975,7 +1058,20 @@ void state_serve(ALLEGRO_EVENT *evento)
 //Estado inicial que procura inicializar recursos do game
 void state_init(ALLEGRO_FONT* font)
 {
+	//Puxa a música e inicia 
+	al_stop_samples();
 
+	char filename[100] ="song/forest.wav";
+	background_sound = al_load_sample(filename);
+	if (!background_sound) 
+	{
+		fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+		exit(1);
+	}
+	if (!al_play_sample(background_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
+	              fprintf(stderr,
+	                 "al_play_sample_data failed, perhaps too many sounds\n");
+	           }
 	stage = 0;
 	PONTUACAO = 0;
 	create_objects();

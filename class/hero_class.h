@@ -1,6 +1,8 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
 #ifndef __HEROR__
 #define __HEROR__
 
@@ -28,6 +30,7 @@ struct monster
 	int type;
 	int using;
 	int live;
+	int life;
 	int x,y;
 	int vai;
 	int sobe;
@@ -51,6 +54,7 @@ typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
 double fps;
 direcao dir;
 int fim;
+
 
   
 void create_objects();

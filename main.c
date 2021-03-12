@@ -17,7 +17,6 @@ int main()
 	ALLEGRO_EVENT_QUEUE* queue;
 	ALLEGRO_DISPLAY* disp;
 	ALLEGRO_FONT* font;
-	ALLEGRO_SAMPLE *sample_data;
 
 	if(!al_init())
 	{
@@ -57,18 +56,7 @@ int main()
       return 1;
   }
 
-    //Puxa a música e inicia 
-    char filename[100] ="song/undertale.mp3";
-    sample_data = al_load_sample("song/dqv_zen.wav");
-    if (!sample_data) 
-    {
-    	fprintf(stderr, "Could not load sample from '%s'!\n", filename);
-    	return 1;
-    }
-    if (!al_play_sample(sample_data, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
-                  fprintf(stderr,
-                     "al_play_sample_data failed, perhaps too many sounds\n");
-               }
+    
 
     //Inicia o Display
     disp = al_create_display(WIDTH, HEIGHT);
