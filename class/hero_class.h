@@ -67,7 +67,7 @@ void cria_monstros_estruturas();
 void UpdateFloor();
 void stages_();
 void desalocador();
-int checa_hero();
+int checa_hero(int i);
 
 
 void state_init(ALLEGRO_FONT* font);

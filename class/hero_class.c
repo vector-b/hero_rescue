@@ -78,7 +78,7 @@ int num_sprite_hero = 1;
 int old_dx;
 int old_dy;
 int last_right = 1;
-int stage = 0;
+int stage = 3;
 hero *hero_     	= NULL;
 obs **obstacles 	= NULL;
 monster **monsters 	= NULL;
@@ -351,9 +351,12 @@ void cria_monstros_estruturas()
 	monsters[2] -> stage = 2;*/
 }
 
-int checa_hero()
+int checa_hero(int i)
 {
-
+	if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x + 1) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+		if ((hero_ -> y + hero_ -> rh - 1) ==  obstacles[i] -> y-1) 
+			return 1;
+	return 0;
 }
 //Função que gerencia os monstros, apenas ativada nos estágios dos respectivos monstros
 void inicia_mobs()
@@ -482,6 +485,15 @@ void inicia_mobs()
 					obstacles[i] -> x++;
 				else
 					obstacles[i] -> x--;
+
+
+				if (checa_hero(i)){
+					if(obstacles[i] -> vai)
+						hero_ -> x++;
+					else
+						hero_ -> x--;
+				}
+
 			}
 		
 	}
@@ -960,6 +972,7 @@ void state_init(ALLEGRO_FONT* font)
 {
 
 	stage = 0;
+	PONTUACAO = 0;
 	create_objects();
 	make_background();
 	al_destroy_bitmap(background);
