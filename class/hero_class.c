@@ -362,8 +362,8 @@ void cria_monstros_estruturas()
 	monsters[5] -> type = 4;
 	monsters[5] -> live = 1;
 	monsters[5] -> life = 1;
-	monsters[5] -> w = 396;
-	monsters[5] -> h = 582;
+	monsters[5] -> w = 70;
+	monsters[5] -> h = 103;
 	monsters[5] -> x = 540;
 	monsters[5] -> rw = 70;
 	monsters[5] -> rh = 103;
@@ -611,9 +611,15 @@ void write_obstacles()
 					al_destroy_bitmap(mob_2);
 				}
 				else if (monsters[i] -> type == 3)
-				{;
+				{
 
 					al_draw_scaled_bitmap(mob_3,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
+					//al_destroy_bitmap(mob_3);
+				}
+				else if (monsters[i] -> type == 4)
+				{
+
+					al_draw_scaled_bitmap(mob_4,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
 					//al_destroy_bitmap(mob_3);
 				}
 	}		
@@ -1019,7 +1025,7 @@ void hit()
 							PONTUACAO+=5;
 						}
 						else
-							hero_ -> x += monsters[i] -> rw;
+							hero_ -> x += monsters[i] -> rw + hero_ -> w;
 						
 					}
 
