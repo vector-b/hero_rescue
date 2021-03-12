@@ -58,7 +58,7 @@ int main()
   }
 
     //Puxa a música e inicia 
-    char filename[100] ="song/undertale.mp3";
+    /*char filename[100] ="song/undertale.mp3";
     sample_data = al_load_sample("song/dqv_zen.wav");
     if (!sample_data) 
     {
@@ -69,7 +69,7 @@ int main()
                   fprintf(stderr,
                      "al_play_sample_data failed, perhaps too many sounds\n");
                }
-
+*/
     //Inicia o Display
     disp = al_create_display(WIDTH, HEIGHT);
     if(!disp)

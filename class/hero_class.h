@@ -18,7 +18,6 @@ struct obs{
 	short dx, dy;
 	short stage;  
   	short w, h; 
-  	short vai;
   	short inside;
   	char name_file[100];
   	short rw,rh; //Valores após resize
@@ -67,7 +66,6 @@ void cria_monstros_estruturas();
 void UpdateFloor();
 void stages_();
 void desalocador();
-int checa_hero(int i);
 
 
 void state_init(ALLEGRO_FONT* font);

@@ -5,12 +5,12 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
-#define NUM_OBS 20
-#define NUM_MON 5 
+#define NUM_OBS 3
+#define NUM_MON 3 
 //Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.bmp"
 #define BRIDGE 			"img/bridge.bmp"
-#define BRIDGE_STAGE	"img/stage_3/back_stage_3.bmp"
+#define BRIDGE_STAGE	"img/bridge_stage.png"
 #define END_GAME_IMAGE 	"img/end_game.png"
 #define GAME_MENU 		"img/hero_adventure.png"
 #define BOA_RIGHT 		"img/death.png"
@@ -20,14 +20,11 @@
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
-
 #define OBJ_FOLDER 		"img/objects/"
 #define MOB_IMAGE		"img/mob/"
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
 #define MOB_FLY			"img/fly/"
 #define MOB_FLY_RIGHT	"img/fly_right/"
-#define MOB_BAT			"img/bat/"
-#define FLOOR_STG3		"img/stage_3/floor_bridge.png"
 
 #define RUNNING_LEFT	"img/hero_left/running/"
 #define RUNNING_RIGHT	"img/hero/running/"
@@ -39,13 +36,12 @@
 #define HERO_IMAGE		"img/hero/"
 #define HERO_IMAGE_LEFT	"img/hero_left/"
 
-#define SUPER_GROUND 435
+#define GROUND 435
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 160
 #define CONSTANTE_G 10
 #define MAX_WIDTH 1600;
 
-int GROUND = 435;
 int PONTUACAO = 0;
 int cont_saltos = 0; 
 int jumping = 0;
@@ -62,14 +58,12 @@ ALLEGRO_BITMAP *heroi_run_left 	= NULL;
 ALLEGRO_BITMAP *brick 			= NULL;
 ALLEGRO_BITMAP *mob 			= NULL;
 ALLEGRO_BITMAP *mob_2			= NULL;
-ALLEGRO_BITMAP *mob_3			= NULL;
 ALLEGRO_BITMAP *stand 			= NULL;
 
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
 
-int playing = 0;
 int checa_sprite = 0;
 int num_sprite = 0;
 
@@ -78,7 +72,7 @@ int num_sprite_hero = 1;
 int old_dx;
 int old_dy;
 int last_right = 1;
-int stage = 3;
+int stage = 0;
 hero *hero_     	= NULL;
 obs **obstacles 	= NULL;
 monster **monsters 	= NULL;
@@ -98,7 +92,7 @@ void make_hero()
   	hero_ -> rw = 45;
   	hero_ -> rh = 65;
   	hero_ -> x = 10;
-	hero_ -> y = SUPER_GROUND - hero_ -> rh ;  
+	hero_ -> y = GROUND - hero_ -> rh ;  
 	
 }
 //Inicia o menu, estágio antes de começar a jogar
@@ -132,130 +126,36 @@ void create_objects()
 {
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
-		obstacles[i] = malloc(8000*sizeof(obstacles));
-	
-	obstacles[0] -> using = 1;
-	obstacles[0] -> w = 145;
-	obstacles[0] -> h = 66;
-	obstacles[0] -> rw = 145;
-	obstacles[0] -> rh = 66;
-	obstacles[0] -> stage = 3;
-	obstacles[0] -> x = 800 - obstacles[0] -> w;
-	obstacles[0] -> name_file[0] = '\0';
-	strcat(obstacles[0] -> name_file, "floor_br.bmp");
-	obstacles[0] -> y = 435;
+		obstacles[i] = malloc(200*sizeof(obstacles));
+	monsters = malloc(NUM_MON*sizeof(monsters));
+	for (int i = 0; i < NUM_MON; i++)
+		monsters[i] = malloc(200*sizeof(monsters[i]));
+
+	obstacles[0] -> using = 0;
+	obstacles[0] -> w = 522;
+	obstacles[0] -> h = 522;
+	obstacles[0] -> x = 200;
+	obstacles[0] -> rw = 50;
+	obstacles[0] -> rh = 50;
+	obstacles[0] -> stage = 0;
+	obstacles[0] -> y =	200 - obstacles[0] -> rh;
 	obstacles[0] -> dx,obstacles[0] -> dy = 0;
 
 	obstacles[1] -> using = 1;
 	obstacles[1] -> w = 106;
 	obstacles[1] -> h = 106;
-	obstacles[1] -> x = 550;
+	obstacles[1] -> x = 600;
 	obstacles[1] -> rw = 50;
 	obstacles[1] -> rh = 50;
 	obstacles[1] -> stage = 1;
 	obstacles[1] -> name_file[0] = '\0';
 	strcat(obstacles[1] -> name_file, "crate.bmp");
-	obstacles[1] -> y = SUPER_GROUND - obstacles[1] -> rh;
+	obstacles[1] -> y = GROUND - obstacles[1] -> rh;
 	obstacles[1] -> dx,obstacles[1] -> dy = 0;
-
-	obstacles[2] -> using = 1;
-	obstacles[2] -> w = 106;
-	obstacles[2] -> h = 106;
-	obstacles[2] -> x = 600;
-	obstacles[2] -> rw = 50;
-	obstacles[2] -> rh = 50;
-	obstacles[2] -> stage = 1;
-	obstacles[2] -> name_file[0] = '\0';
-	strcat(obstacles[2] -> name_file, "crate.bmp");
-	obstacles[2] -> y = SUPER_GROUND - obstacles[2] -> rh;
-	obstacles[2] -> dx,obstacles[2] -> dy = 0;
-
-
-	obstacles[3] -> using = 1;
-	obstacles[3] -> w = 106;
-	obstacles[3] -> h = 106;
-	obstacles[3] -> x = 239;
-	obstacles[3] -> rw = 50;
-	obstacles[3] -> rh = 50;
-	obstacles[3] -> stage = 2;
-	obstacles[3] -> name_file[0] = '\0';
-	strcat(obstacles[3] -> name_file, "crate.bmp");
-	obstacles[3] -> y = SUPER_GROUND - obstacles[3] -> rh;
-	obstacles[3] -> dx,obstacles[3] -> dy = 0;
-
-	obstacles[4] -> using = 1;
-	obstacles[4] -> w = 74;
-	obstacles[4] -> h = 129;
-	obstacles[4] -> x = 289;
-	obstacles[4] -> rw = 74;
-	obstacles[4] -> rh = 129;
-	obstacles[4] -> stage = 2;
-	obstacles[4] -> name_file[0] = '\0';
-	strcat(obstacles[4] -> name_file, "brick_4.bmp");
-	obstacles[4] -> y = SUPER_GROUND - obstacles[4] -> rh;
-	obstacles[4] -> dx,obstacles[4] -> dy = 0;
-
-	obstacles[5] -> using = 1;
-	obstacles[5] -> w = 74;
-	obstacles[5] -> h = 129;
-	obstacles[5] -> x = 363;
-	obstacles[5] -> rw = 74;
-	obstacles[5] -> rh = 129;
-	obstacles[5] -> stage = 2;
-	obstacles[5] -> name_file[0] = '\0';
-	strcat(obstacles[5] -> name_file, "brick_4.bmp");
-	obstacles[5] -> y = SUPER_GROUND - obstacles[5] -> rh;
-	obstacles[5] -> dx,obstacles[5] -> dy = 0;
-
-	obstacles[6] -> using = 1;
-	obstacles[6] -> w = 74;
-	obstacles[6] -> h = 129;
-	obstacles[6] -> x = 437;
-	obstacles[6] -> rw = 74;
-	obstacles[6] -> rh = 129;
-	obstacles[6] -> stage = 2;
-	obstacles[6] -> name_file[0] = '\0';
-	strcat(obstacles[6] -> name_file, "brick_4.bmp");
-	obstacles[6] -> y = SUPER_GROUND - obstacles[6] -> rh;
-	obstacles[6] -> dx,obstacles[6] -> dy = 0;
-
-	obstacles[7] -> using = 1;
-	obstacles[7] -> w = 145;
-	obstacles[7] -> h = 66;
-	obstacles[7] -> x = 0;
-	obstacles[7] -> rw = 145;
-	obstacles[7] -> rh = 66;
-	obstacles[7] -> stage = 3;
-	obstacles[7] -> name_file[0] = '\0';
-	strcat(obstacles[7] -> name_file, "floor_br.bmp");
-	obstacles[7] -> y = 435;
-	obstacles[7] -> dx,obstacles[7] -> dy = 0;
-
-	obstacles[8] -> using = 1;
-	obstacles[8] -> w = 66;
-	obstacles[8] -> h = 24;
-	obstacles[8] -> x = 146;
-	obstacles[8] -> rw = 66;
-	obstacles[8] -> rh = 24;
-	obstacles[8] -> vai = 1;
-	obstacles[8] -> stage = 3;
-	obstacles[8] -> name_file[0] = '\0';
-	strcat(obstacles[8] -> name_file, "brick_5.png");
-	obstacles[8] -> y = 435;
-	obstacles[8] -> dx,obstacles[8] -> dy = 0;
-
-
-
-
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
 {
-
-	monsters = malloc(NUM_MON*sizeof(monsters));
-	for (int i = 0; i < NUM_MON; i++)
-		monsters[i] = malloc(1000*sizeof(monsters[i]));
-
 	monsters[0] -> using = 1;
 	monsters[0] -> type = 1;
 	monsters[0] -> live = 1;
@@ -264,7 +164,7 @@ void cria_monstros_estruturas()
 	monsters[0] -> x = 550;
 	monsters[0] -> rw = 50;
 	monsters[0] -> rh = 50;
-	monsters[0] -> y = SUPER_GROUND - monsters[0] -> rh;
+	monsters[0] -> y = GROUND - monsters[0] -> rh;
 	monsters[0] -> dx,monsters[0] -> dy = 0;
 	monsters[0] -> vai = 0;
 	monsters[0] -> x_ini = 300;
@@ -292,46 +192,6 @@ void cria_monstros_estruturas()
 	monsters[1] -> stage = 1;
 	monsters[1] -> checa_sprite = 0;
   	monsters[1] -> num_sprite = 0;
-
-  	monsters[2] -> using = 1;
-	monsters[2] -> type = 3;
-	monsters[2] -> live = 1;
-	monsters[2] -> w = 14;
-	monsters[2] -> h = 11;
-	monsters[2] -> x = 200;
-	monsters[2] -> rw = 28;
-	monsters[2] -> rh = 22;
-	monsters[2] -> y = 200;
-	monsters[2] -> dx,monsters[2] -> dy = 0;
-	monsters[2] -> vai = 0;
-	monsters[2] -> sobe = 0;
-	monsters[2] -> x_ini = 0;
-	monsters[2] -> x_dest = 800 - monsters[2] -> rw;
-	monsters[2] -> y_ini = 0;
-	monsters[2] -> y_dest = 0;
-	monsters[2] -> stage = 2;
-	monsters[2] -> checa_sprite = 0;
-  	monsters[2] -> num_sprite = 0;
-
-  	monsters[3] -> using = 1;
-	monsters[3] -> type = 3;
-	monsters[3] -> live = 1;
-	monsters[3] -> w = 14;
-	monsters[3] -> h = 11;
-	monsters[3] -> x = 540;
-	monsters[3] -> rw = 28;
-	monsters[3] -> rh = 22;
-	monsters[3] -> y = 100;
-	monsters[3] -> dx,monsters[3] -> dy = 0;
-	monsters[3] -> vai = 0;
-	monsters[3] -> sobe = 0;
-	monsters[3] -> x_ini = 0;
-	monsters[3] -> x_dest = 800 - monsters[3] -> rw;
-	monsters[3] -> y_ini = 0;
-	monsters[3] -> y_dest = 0;
-	monsters[3] -> stage = 2;
-	monsters[3] -> checa_sprite = 0;
-  	monsters[3] -> num_sprite = 0;
 	/*
 	monsters[2] -> using = 1;
 	monsters[2] -> type = 1;
@@ -349,14 +209,6 @@ void cria_monstros_estruturas()
 	monsters[2] -> y_ini = 0;
 	monsters[2] -> y_dest = 0;
 	monsters[2] -> stage = 2;*/
-}
-
-int checa_hero(int i)
-{
-	if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x + 1) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
-		if ((hero_ -> y + hero_ -> rh - 1) ==  obstacles[i] -> y-1) 
-			return 1;
-	return 0;
 }
 //Função que gerencia os monstros, apenas ativada nos estágios dos respectivos monstros
 void inicia_mobs()
@@ -441,60 +293,8 @@ void inicia_mobs()
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
 
-			}
-			else if (monsters[i] -> type == 3)
-			{
-				monsters[i] -> checa_sprite++;
-
-				if((monsters[i] -> checa_sprite % 3) == 0 )
-					monsters[i] -> num_sprite++;
-
-				if (monsters[i] -> num_sprite >= 4)
-					monsters[i] -> num_sprite = 0;
-
-				char filename[50] = "";
-				snprintf(filename, 12, "%d.png", monsters[i] -> num_sprite);;
-
-				char path[100] = "";
-				/*if (monsters[i] -> vai)
-					strcat(path, MOB_FLY_RIGHT);
-				else*/
-					strcat(path, MOB_BAT);
-
-				strcat(path, filename);
-				mob_3 = al_load_bitmap(path);
-				
-				if (monsters[i] -> checa_sprite == 100)
-					monsters[i] -> checa_sprite = 0;
 			}	
 		}
-	}
-	for (int i = 0; i < NUM_OBS; i++)
-	{
-		if (stage == obstacles[i] -> stage)
-			if (i == 8)
-			{
-				//Muda a direção do deslocamento horizontal
-				if (obstacles[i] -> x >= (800 - 146 - obstacles[i] -> w)-1)
-					obstacles[i] -> vai = 0;
-				else if (obstacles[i] -> x  <=  146)
-					obstacles[i] -> vai = 1;
-
-				//Anda pra direita ou esquerda
-				if (obstacles[i] -> vai)
-					obstacles[i] -> x++;
-				else
-					obstacles[i] -> x--;
-
-
-				if (checa_hero(i)){
-					if(obstacles[i] -> vai)
-						hero_ -> x++;
-					else
-						hero_ -> x--;
-				}
-
-			}
 		
 	}
 }
@@ -506,21 +306,21 @@ void write_obstacles()
 {
 	//Imprime os obstaculos existentes
 	for (int i = 0; i < NUM_OBS; i++)
-			if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
-			{	
-				char path[100] = "";
-				strcat(path, OBJ_FOLDER);
-				strcat(path,obstacles[i] -> name_file);
-				ALLEGRO_BITMAP *obj = NULL;
-				obj = al_load_bitmap(path);
-				if (!obj)
-				{
-					fprintf(stderr, "Problemas na leitura de um bmp!\n" );
-					exit(1);
-				}
-				al_draw_scaled_bitmap(obj,0,0,obstacles[i] -> w,obstacles[i] -> h,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
-				al_destroy_bitmap(obj);
+		if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
+		{	
+			char path[100] = "";
+			strcat(path, OBJ_FOLDER);
+			strcat(path,obstacles[i] -> name_file);
+			ALLEGRO_BITMAP *obj = NULL;
+			obj = al_load_bitmap(path);
+			if (!obj)
+			{
+				fprintf(stderr, "Problemas na leitura de um bmp!\n" );
+				exit(1);
 			}
+			al_draw_scaled_bitmap(obj,0,0,obstacles[i] -> w,obstacles[i] -> h,obstacles[i] -> x,obstacles[i] -> y,obstacles[i] -> rw,obstacles[i] -> rh,0);
+			///al_destroy_bitmap(obj);
+		}
 		
 	inicia_mobs();
 	for (int i = 0; i < NUM_MON; i++)
@@ -536,13 +336,7 @@ void write_obstacles()
 				{
 					al_draw_scaled_bitmap(mob_2,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
 					al_destroy_bitmap(mob_2);
-				}
-				else if (monsters[i] -> type == 3)
-				{;
-
-					al_draw_scaled_bitmap(mob_3,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
-					//al_destroy_bitmap(mob_3);
-				}
+				}	
 	}		
 }
 //Escreve o herói em sua respectiva posição
@@ -744,29 +538,10 @@ void delta_transform()
 			jumping = 0;
 	}
 }
-
-void morrer()
-{
-	death_sound = al_load_sample("song/lego.wav");
-					if (!death_sound) 
-					{
-						fprintf(stderr, "Could not load death sound!\n");
-						exit(1);
-					}
-					if (!al_play_sample(death_sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
-					              fprintf(stderr,
-					                 "al_play_sample_data failed, perhaps too many sounds\n");
-					           }
-
-}
 //Simula uma gravidade que puxa o heroi em situações necessárias
 void gravity_check()
 {
-	if (hero_ -> y >= 500){
-		hero_ -> live = 0;
-		morrer();
-	}
-
+	// PENSAR NUMA SOLUÇÃO PARA GRAVIDADE
 	if (hero_ -> dy > 0)
 		hero_ -> dy =0;
 	int distancia_floor_hero = 0;
@@ -786,30 +561,11 @@ void UpdateFloor()
 	int out = 1;
 	if (hero_ -> y + hero_ -> rh == FLOOR)
 		hero_ -> dy = 0 ;
-	if (hero_ -> y + hero_ -> rh > GROUND )
-	{	
-		hero_ -> y = GROUND - hero_ -> rh;
-	}
-	for (int i = 0; i < NUM_OBS; i++)
+	for (int i = 0; i < 2; i++)
 	{
-
 		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 		{
-			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
-				{
-					out = 1;
-					//Em cima da caixa
-					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
-					{
-						out = 0;
-					}
-				}
-				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
-				{
-					//printf("xd\n");
-					//Em baixo da caixa
-					out = 1; 
-				}
+			out = 0;
 		}		
 	}
 	if (out)
@@ -841,10 +597,6 @@ void CameraUpdate()
 //Realiza alterações de acordo com o stage atual
 void stages_()
 {
-	if(stage == 3)
-		GROUND = 500 + hero_ -> rh;
-	else
-		GROUND = 435;
 	if (hero_ -> live == 0)
 	{
 		estado = FIMJOGO;
@@ -874,36 +626,31 @@ void stages_()
 //Checa colisão com outras estruturas/monstros
 void hit()
 {
-	for (int i = 0; i < NUM_OBS; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
 		{
-			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x + 1) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
 			{
+				//printf("%d\n",hero_ -> y );
 				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 				{
+					//Em cima da caixa
 					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
 					{
 						FLOOR = obstacles[i] -> y;
 						hero_ -> dy = 0;
 						hero_ -> y = obstacles[i] -> y - hero_ -> rh;
-						draw_hero();
 					}
 				}
 				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
 				{
-					//Em baixo da caixa
-					if (hero_ -> y == obstacles[i] -> y + obstacles[i]-> rh)
-					{
-						hero_ -> y = obstacles[i] -> y + obstacles[i]-> rh - 1;
-					}
+					//Em baixo da caixa 
 				}
-				else if (!((FLOOR <=  obstacles[i] -> y ) && (FLOOR > obstacles[i] -> y - 5)))
+				else if (FLOOR != obstacles[i] -> y -2)
 				{
-					if (hero_ -> x <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
-					{
+					if (hero_ -> x + hero_ -> rw <=  (((obstacles[i] -> x + obstacles[i] -> x + (obstacles[i] -> rw))/2)))
 						hero_ -> x = obstacles[i] -> x - hero_ -> rw;
-					}
 					else
 						hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
 				}
@@ -944,7 +691,16 @@ void hit()
 				{
 
 					hero_ -> live = 0;
-					morrer();
+					death_sound = al_load_sample("song/lego.wav");
+					if (!death_sound) 
+					{
+						fprintf(stderr, "Could not load death sound!\n");
+						exit(1);
+					}
+					if (!al_play_sample(death_sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
+					              fprintf(stderr,
+					                 "al_play_sample_data failed, perhaps too many sounds\n");
+					           }
 				}
 			}
 		}
@@ -970,9 +726,6 @@ void state_serve(ALLEGRO_EVENT *evento)
 //Estado inicial que procura inicializar recursos do game
 void state_init(ALLEGRO_FONT* font)
 {
-
-	stage = 0;
-	PONTUACAO = 0;
 	create_objects();
 	make_background();
 	al_destroy_bitmap(background);
@@ -982,7 +735,7 @@ void state_init(ALLEGRO_FONT* font)
 	make_hero(hero_);
 	cria_monstros_estruturas();
 	al_flip_display();
-	FLOOR = SUPER_GROUND;
+	FLOOR = GROUND;
 	estado = SERVINDO;
 }
 //Estado principal de gameplay
@@ -1047,6 +800,13 @@ void state_play(ALLEGRO_FONT* font)
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,20, 0,estagio);
 	//al_draw_text(font, al_map_rgb(255, 104, 1), 700,30, 0,fps_demo);
+	if (stage == 3)
+	{
+		ALLEGRO_BITMAP *bridge_img = NULL;
+		bridge_img = al_load_bitmap(BRIDGE);
+		al_draw_scaled_bitmap(bridge_img,0,0,800,500,0,0,800,500,0);
+		al_destroy_bitmap(bridge_img);
+	}
 	
 
 
