@@ -14,6 +14,8 @@
 
 int main()
 {
+  ler_file_scores();
+
   fim = 0;
 	ALLEGRO_TIMER* timer;
 	ALLEGRO_EVENT_QUEUE* queue;
@@ -153,35 +155,32 @@ int main()
     }
    
 
-    char nome[100];
+   
 
     ALLEGRO_USTR *name;
-    name = al_ustr_new("o nome do bixa é -> ");
+    name = al_ustr_new("o nome do cara é -> ");
 
-
-    while(1)
+    int done = 0;
+    while(!done)
     {
-      recebe_user(font);
+      recebe_user(font, name);
       ALLEGRO_EVENT ev;
       al_wait_for_event(queue , &ev);
       switch(ev.type)
       {
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+          done = 1;
+          break;  
         case ALLEGRO_EVENT_KEY_CHAR:
           if (ev.keyboard.unichar >= 32){
              al_ustr_append_chr(name, ev.keyboard.unichar);
           }
           break;
-        case ALLEGRO_EVENT_KEY_DOWN:
-          if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-            break;
-          break;
       }
      
     }
-  
-    printf("dale\n");
-    strcpy(nome, al_cstr(name));
-    printf("%s\n",nome );
+
+    escreve_file_scores();
     al_destroy_timer(timer);
     al_destroy_display(disp);
     al_destroy_event_queue(queue);

@@ -1252,9 +1252,53 @@ void state_close()
 	al_flip_display();
 }
 
-void recebe_user(ALLEGRO_FONT* font)
+void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
+	char nome[100];
+	us = malloc(100*sizeof(h_score));
+    strcpy(nome, al_cstr(name));
+    strcpy(us -> nome, nome);
+    us -> score = PONTUACAO;
+
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(font, al_map_rgb(255, 104, 1), 300,250, 0,"DIGITA A PORRA DO SEU NOME CARALHO");
+	al_draw_text(font, al_map_rgb(255, 104, 1), 300,250, 0,nome);
 	al_flip_display();
+}
+
+void ler_file_scores()
+{
+	h_score = malloc(11*sizeof(h_score));
+		for (int i = 0; i < 11; i++)
+			h_score[i] = malloc(100*sizeof(h_score));
+	char c;
+	FILE *file_score;
+	file_score = fopen("scores","a+");
+	while ((c = fgetc(file_score)) != EOF) 
+	{
+	  fseek(file_score,-1,SEEK_CUR);
+	  fscanf(file_score, "%s %d", h_score[cont_scores] -> nome, &h_score[cont_scores] -> score);
+	  cont_scores++;
+	}
+	printf("%s %d \n",h_score[0] -> nome,h_score[0] -> score );
+	fclose(file_score);
+}
+int compare (const void * a, const void * b)
+{
+
+  user_score *scoreA = (user_score *)a;
+  user_score *scoreB = (user_score *)b;
+
+  return ( scoreB->score - scoreA->score );
+}void escreve_file_scores()
+{
+
+	h_score[0] -> score = us -> score;
+	strcpy(h_score[0] -> nome, us -> nome);
+
+	qsort(h_score, cont_scores, sizeof(user_score), compare);
+	for (int i = 0; i < 10; i++)
+	{
+		printf("%s %d\n",h_score[i] -> nome,h_score[i] -> score);
+	}
+	
 }

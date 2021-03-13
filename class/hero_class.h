@@ -51,11 +51,16 @@ struct plataforma
   	short w, h; 
   	short rw,rh;
 };
-
+struct user_score
+{
+	char nome[100];
+	int score;
+};
 typedef struct monster monster;
 typedef struct obs obs;
 typedef struct hero hero;
 typedef struct plataforma plat;
+typedef struct user_score user_score;
 typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 state estado;
 typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
@@ -83,8 +88,9 @@ int  checa_hero(int i);
 void inicia_escadas();
 void hero_updown();
 int inside_stairs(int i);
-void recebe_user(ALLEGRO_FONT* font);
-
+void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name);
+void ler_file_scores();
+void escreve_file_scores();
 
 
 void state_init(ALLEGRO_FONT* font);

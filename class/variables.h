@@ -70,6 +70,9 @@ int old_dx;
 int old_dy;
 int last_right = 1;
 int stage = 3;
+int cont_scores = 0;
+
+
 int FLOOR;
 
 
@@ -95,9 +98,12 @@ ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
 
-hero *hero_     				= NULL;
-obs **obstacles 				= NULL;
+hero 	*hero_     				= NULL;
+obs 	**obstacles 			= NULL;
 monster **monsters 				= NULL;
-plat **stairs 					= NULL;
+plat 	**stairs 				= NULL;
+user_score **h_score			= NULL;
+user_score *us   				= NULL;
+
 
 #endif
