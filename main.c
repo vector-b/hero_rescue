@@ -1,5 +1,7 @@
 #include <stdio.h>
+
 #include "class/hero_class.h"
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
@@ -149,6 +151,37 @@ int main()
         	break;
 
     }
+   
+
+    char nome[100];
+
+    ALLEGRO_USTR *name;
+    name = al_ustr_new("o nome do bixa é -> ");
+
+
+    while(1)
+    {
+      recebe_user(font);
+      ALLEGRO_EVENT ev;
+      al_wait_for_event(queue , &ev);
+      switch(ev.type)
+      {
+        case ALLEGRO_EVENT_KEY_CHAR:
+          if (ev.keyboard.unichar >= 32){
+             al_ustr_append_chr(name, ev.keyboard.unichar);
+          }
+          break;
+        case ALLEGRO_EVENT_KEY_DOWN:
+          if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+            break;
+          break;
+      }
+     
+    }
+  
+    printf("dale\n");
+    strcpy(nome, al_cstr(name));
+    printf("%s\n",nome );
     al_destroy_timer(timer);
     al_destroy_display(disp);
     al_destroy_event_queue(queue);

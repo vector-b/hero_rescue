@@ -42,12 +42,20 @@ struct monster
   	short rw,rh;
   	int checa_sprite;
   	int num_sprite;
-
+};
+struct plataforma
+{
+	int x,y;
+	short stage;
+	short dx, dy;  
+  	short w, h; 
+  	short rw,rh;
 };
 
 typedef struct monster monster;
 typedef struct obs obs;
 typedef struct hero hero;
+typedef struct plataforma plat;
 typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO} state ;
 state estado;
 typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
@@ -71,7 +79,12 @@ void cria_monstros_estruturas();
 void UpdateFloor();
 void stages_();
 void desalocador();
-int checa_hero(int i);
+int  checa_hero(int i);
+void inicia_escadas();
+void hero_updown();
+int inside_stairs(int i);
+void recebe_user(ALLEGRO_FONT* font);
+
 
 
 void state_init(ALLEGRO_FONT* font);

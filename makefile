@@ -12,8 +12,8 @@ all: hello
 hello:${OBJS}
 	${CC} -o ${TARG} ${OBJS} ${INCLUDE} ${LIBS} ${CFLAG}
 
-mosaico.o:   main.c class/hero_class.h
-mosaic_class.o: class/hero_class.c class/hero_class.h
+hero.o:   main.c  class/variables.h class/hero_class.h
+hero_class.o: class/hero_class.c class/variables.h class/hero_class.h
 
 clean:
 	-rm -f *~ *.o
