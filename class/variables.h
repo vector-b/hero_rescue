@@ -21,6 +21,7 @@
 #define GAME_MENU 		"img/hero_adventure.png"
 #define BOA_RIGHT 		"img/death.png"
 #define BOA_LEFT        "img/safety.png"
+#define HELP_IMAGE		"img/help.png"
 
 #define HERO_FILE 		"img/hero.png"
 #define RUN_RIGHT 		"img/run_right.png"
@@ -51,6 +52,7 @@
 #define HERO_IMAGE_LEFT	"img/hero_left/"
 
 #define SUPER_GROUND 435
+
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 160
 #define CONSTANTE_G 10
@@ -103,6 +105,7 @@ ALLEGRO_SAMPLE *death_sound		= NULL;
 
 ALLEGRO_FONT* title_font		= NULL;
 ALLEGRO_FONT* score_font		= NULL;
+ALLEGRO_FONT* name_font			= NULL;
 
 hero 	*hero_     				= NULL;
 obs 	**obstacles 			= NULL;

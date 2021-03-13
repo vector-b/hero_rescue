@@ -12,13 +12,19 @@
 
 void inicia_fontes(){
 
-	 title_font = al_load_ttf_font(FONT_PIX, 40, 0);
+	title_font = al_load_ttf_font(FONT_PIX, 40, 0);
 	if (!title_font)
 	{
 	    fprintf(stderr, "Não foi possivel carregar a fonte" );
 	    exit(1);
 	}
 	score_font = al_load_ttf_font(FONT_PIX, 15, 0);
+	if (!score_font)
+	{
+	    fprintf(stderr, "Não foi possivel carregar a fonte" );
+	   	exit(1);
+	}
+	name_font = al_load_ttf_font(FONT_PIX, 32, 0);
 	if (!score_font)
 	{
 	    fprintf(stderr, "Não foi possivel carregar a fonte" );
@@ -398,6 +404,26 @@ void cria_monstros_estruturas()
 	monsters[6] -> checa_sprite = 0;
   	monsters[6] -> num_sprite = 0;
 
+  	monsters[7] -> using = 1;
+	monsters[7] -> type = 4;
+	monsters[7] -> live = 1;
+	monsters[7] -> life = 1;
+	monsters[7] -> w = 70;
+	monsters[7] -> h = 103;
+	monsters[7] -> x = 540;
+	monsters[7] -> rw = 70;
+	monsters[7] -> rh = 103;
+	monsters[7] -> y = 300;
+	monsters[7] -> dx,monsters[7] -> dy = 0;
+	monsters[7] -> vai = 0;
+	monsters[7] -> sobe = 0;
+	monsters[7] -> x_ini = 100;
+	monsters[7] -> x_dest = 800 - monsters[7] -> rw;
+	monsters[7] -> y_ini = 0;
+	monsters[7] -> y_dest = 0;
+	monsters[7] -> stage = 3;
+	monsters[7] -> checa_sprite = 0;
+  	monsters[7] -> num_sprite = 0;
 }
 
 int checa_hero(int i)
@@ -961,7 +987,6 @@ void UpdateFloor()
 //Imprime o background correto nas fases 
 void CameraUpdate()
 {
-
 	if (stage != 3)
 	{
 		background=al_load_bitmap(BACKGROUND_FILE);
@@ -1063,6 +1088,7 @@ void hit()
 				int pos =hero_ -> y + hero_ -> rh;
 				if ((pos >= monsters[i] -> y) && (pos <= monsters[i] -> y + (monsters[i]->rh/3))) 
 				{
+						hero_ -> dy -= CONSTANTE_Y;
 						monsters[i] -> life--;
 						if (monsters[i] -> life == 0 )
 						{
@@ -1085,6 +1111,8 @@ void hit()
 								PONTUACAO+=2;
 							else if(type == 4)
 								PONTUACAO+=10;
+							else if(type == 5)
+								PONTUACAO+=50;
 						}
 						else{
 							if (monsters[i] -> vai)
@@ -1250,10 +1278,9 @@ void state_close()
 }
 void show_scores()
 {
-	
 	al_clear_to_color(al_map_rgb(0, 35, 8));
 
-	al_draw_text(title_font, al_map_rgb(226, 233, 5), 250,100, 0,"HIGH - SCORES");
+	al_draw_text(title_font, al_map_rgb(242, 238, 113), 250,100, 0,"HIGH - SCORES");
 	
 	int offset = 10;
 	for (int i = 0; i < cont_scores; i++)
@@ -1268,11 +1295,19 @@ void show_scores()
 	//al_destroy_font(font);
 	al_flip_display();
 }
-
-
-
-
-
+void help()
+{
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	ALLEGRO_BITMAP *ajuda = NULL;
+	ajuda = al_load_bitmap(HELP_IMAGE);
+	if (!ajuda)
+	{
+		fprintf(stderr, "Erro ao ler imagem de ajuda\n");
+		exit(1);
+	}
+	al_draw_bitmap(ajuda, 0, 0, 0);
+	al_flip_display();
+}
 
 
 
@@ -1282,12 +1317,11 @@ void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 	us = malloc(100*sizeof(h_score));
     strcpy(nome, al_cstr(name));
     strcpy(us -> nome, nome);
-    us -> score = PONTUACAO;
 
     char text[100] = "Digite seu nome: ";
-	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(font, al_map_rgb(255, 104, 1), 300,180, 0,text);
-	al_draw_text(font, al_map_rgb(255, 104, 1), 300,250, 0,nome);
+	al_clear_to_color(al_map_rgb(0, 35, 8));
+	al_draw_text(title_font, al_map_rgb(255, 104, 1), 250,180, 0,text);
+	al_draw_text(name_font, al_map_rgb(255, 104, 1), 330,250, 0,nome);
 	al_flip_display();
 }
 void ler_file_scores()

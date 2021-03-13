@@ -12,9 +12,11 @@
 #include "allegro5/allegro_ttf.h"
 #define RESERVED_SAMPLES   16
 #define MAX_SAMPLE_DATA    10
+#define MAX_LEN 5
 #define WIDTH 800
 #define HEIGHT 500
 
+int old_state;
 int main()
 {
   ler_file_scores();
@@ -74,13 +76,14 @@ int main()
   }
   inicia_fontes();
 
-    //Inicia o Display
-    disp = al_create_display(WIDTH, HEIGHT);
-    if(!disp)
+  //Inicia o Display
+  disp = al_create_display(WIDTH, HEIGHT);
+  if(!disp)
 	{
     	fprintf(stderr, "Não foi possível iniciar a tela");
 	    return 1;
 	}
+  al_set_window_title(disp, "Hero Adventure");
 	//Inicia a fonte
 	font = al_create_builtin_font();
 	if(!font)
@@ -131,12 +134,12 @@ int main()
           			state_serve(&evento);break;
           		case 3:
           			state_play(font);break;
-          		case 4:
-          			state_init(font);break;
           		case 5:
           			state_close();break;
               case 6:
                 show_scores();break;
+              case 7:
+                help();break;
           		default: break ;
           	}
         }
@@ -144,12 +147,25 @@ int main()
         {
             if(evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
                 break;
-            else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) && (estado == SERVINDO))
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) &&((estado == SERVINDO) || (estado == HELP)))
             	estado = JOGANDO;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_S) && (estado == SERVINDO))
                estado = HIGH_SCORES;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_M))
                estado = INICIO;
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_F1) && (estado != 6))
+            {
+              if (estado != SERVINDO)
+              {
+                if (estado != HELP){
+                  old_state = estado;
+                  estado = HELP;
+                }
+                else
+                  estado = old_state;
+              }
+             
+            }
             else if(estado == JOGANDO)
             {
               if(evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
@@ -173,7 +189,7 @@ int main()
     }
    
 
-   
+   int x = 0;
 
     ALLEGRO_USTR *name;
     name = al_ustr_new("");
@@ -200,13 +216,23 @@ int main()
           done = 1;
           break;  
         case ALLEGRO_EVENT_KEY_CHAR:
-          if (ev.keyboard.unichar >= 32){
-             al_ustr_append_chr(name, ev.keyboard.unichar);
+          if (ev.keyboard.unichar >= 33)
+          {
+             if (x <= MAX_LEN){
+                al_ustr_append_chr(name, ev.keyboard.unichar);
+                x=al_ustr_length(name);
+             }
           }
           else if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-          {
               done = 1;
+          else if (ev.keyboard.keycode == ALLEGRO_KEY_ENTER)
+              done = 1;
+          else if (ev.keyboard.keycode == ALLEGRO_KEY_BACKSPACE)
+          {
+              al_ustr_remove_chr(name, x);
+              x--;
           }
+
           break;
       }
      
