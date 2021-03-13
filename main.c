@@ -123,6 +123,8 @@ int main()
           			state_init(font);break;
           		case 5:
           			state_close();break;
+              case 6:
+                show_scores();break;
           		default: break ;
           	}
         }
@@ -132,6 +134,10 @@ int main()
                 break;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) && (estado == SERVINDO))
             	estado = JOGANDO;
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_S) && (estado == SERVINDO))
+               estado = HIGH_SCORES;
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_M))
+               estado = INICIO;
             else if(estado == JOGANDO)
             {
               if(evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
@@ -158,14 +164,24 @@ int main()
    
 
     ALLEGRO_USTR *name;
-    name = al_ustr_new("o nome do cara é -> ");
+    name = al_ustr_new("");
+    ALLEGRO_EVENT_QUEUE *q;
+    q = al_create_event_queue();
+    if(!q)
+    {
+        printf("couldn't initialize queue\n");
+        exit(1);
+    }
+
+    //Registra os eventos do programa
+    al_register_event_source(q, al_get_keyboard_event_source());
 
     int done = 0;
     while(!done)
     {
       recebe_user(font, name);
       ALLEGRO_EVENT ev;
-      al_wait_for_event(queue , &ev);
+      al_wait_for_event(q , &ev);
       switch(ev.type)
       {
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -174,6 +190,10 @@ int main()
         case ALLEGRO_EVENT_KEY_CHAR:
           if (ev.keyboard.unichar >= 32){
              al_ustr_append_chr(name, ev.keyboard.unichar);
+          }
+          else if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+          {
+              done = 1;
           }
           break;
       }
@@ -184,6 +204,8 @@ int main()
     al_destroy_timer(timer);
     al_destroy_display(disp);
     al_destroy_event_queue(queue);
+    al_destroy_event_queue(q);
+
 
 	return 0;
 }

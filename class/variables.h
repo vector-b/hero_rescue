@@ -52,7 +52,7 @@
 #define CONSTANTE_Y 160
 #define CONSTANTE_G 10
 #define MAX_WIDTH 1600;
-#define NUM_OBS 15
+#define NUM_OBS 11
 #define NUM_MON 8 
 #define NUM_STAIRS 1
 

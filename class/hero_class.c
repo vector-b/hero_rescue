@@ -58,18 +58,6 @@ void inicia_escadas()
 	stairs[0] -> dy, stairs[0] -> dx = 0;
 	stairs[0] -> stage = 4;
 }
-int inside_stairs(int i)
-{
-	if ((hero_ -> x + hero_ -> rw >= stairs[i] -> x + 1) && (hero_ -> x <= stairs[i] -> x + stairs[i] -> rw - 1))
-	{
-		if (hero_ -> y <= stairs[i] -> y + stairs[i] -> rh)
-		{
-			/* code */
-		}
-			return 1;
-	}
-	return 0;
-}
 void hero_updown()
 {
 	for (int i = 0; i < NUM_STAIRS; i++)
@@ -95,7 +83,7 @@ void alocador()
 {
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
-		obstacles[i] = malloc(10000*sizeof(obstacles));
+		obstacles[i] = malloc(15000*sizeof(obstacles));
 
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
@@ -204,6 +192,7 @@ void create_objects()
 	obstacles[7] -> y = 435;
 	obstacles[7] -> dx,obstacles[7] -> dy = 0;
 
+
 	obstacles[8] -> using = 1;
 	obstacles[8] -> w = 66;
 	obstacles[8] -> h = 24;
@@ -217,31 +206,31 @@ void create_objects()
 	obstacles[8] -> y = 435;
 	obstacles[8] -> dx,obstacles[8] -> dy = 0;
 
+	obstacles[9] -> using = 1;
+	obstacles[9] -> w = 66;
+	obstacles[9] -> h = 24;
+	obstacles[9] -> x = 150;
+	obstacles[9] -> rw = 66;
+	obstacles[9] -> rh = 24;
+	obstacles[9] -> vai = 1;
+	obstacles[9] -> stage = 4;
+	obstacles[9] -> name_file[0] = '\0';
+	strcat(obstacles[9] -> name_file, "brick_5.png");
+	obstacles[9] -> y = 435 - obstacles[9] -> rh;
+	obstacles[9] -> dx,obstacles[9] -> dy = 0;
+
 	obstacles[10] -> using = 1;
-	obstacles[10] -> w = 66;
-	obstacles[10] -> h = 24;
-	obstacles[10] -> x = 150;
-	obstacles[10] -> rw = 66;
-	obstacles[10] -> rh = 24;
+	obstacles[10] -> w = 250;
+	obstacles[10] -> h = 50;
+	obstacles[10] -> x = 250;
+	obstacles[10] -> rw = 175;
+	obstacles[10] -> rh = 35;
 	obstacles[10] -> vai = 1;
 	obstacles[10] -> stage = 4;
 	obstacles[10] -> name_file[0] = '\0';
-	strcat(obstacles[10] -> name_file, "brick_5.png");
-	obstacles[10] -> y = 435 - obstacles[10] -> rh;
+	strcat(obstacles[10] -> name_file, "brick_big.png");
+	obstacles[10] -> y = 200;
 	obstacles[10] -> dx,obstacles[10] -> dy = 0;
-
-	obstacles[11] -> using = 1;
-	obstacles[11] -> w = 250;
-	obstacles[11] -> h = 50;
-	obstacles[11] -> x = 250;
-	obstacles[11] -> rw = 175;
-	obstacles[11] -> rh = 35;
-	obstacles[11] -> vai = 1;
-	obstacles[11] -> stage = 4;
-	obstacles[11] -> name_file[0] = '\0';
-	strcat(obstacles[11] -> name_file, "brick_big.png");
-	obstacles[11] -> y = 200;
-	obstacles[11] -> dx,obstacles[11] -> dy = 0;
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
@@ -389,23 +378,7 @@ void cria_monstros_estruturas()
 	monsters[6] -> stage = 4;
 	monsters[6] -> checa_sprite = 0;
   	monsters[6] -> num_sprite = 0;
-	/*
-	monsters[2] -> using = 1;
-	monsters[2] -> type = 1;
-	monsters[2] -> live = 1;
-	monsters[2] -> w = 315;
-	monsters[2] -> h = 329;
-	monsters[2] -> x = 600;
-	monsters[2] -> rw = 50;
-	monsters[2] -> rh = 50;
-	monsters[2] -> y = GROUND - monsters[0] -> rh;
-	monsters[2] -> dx,monsters[0] -> dy = 0;
-	monsters[2] -> vai = 0;
-	monsters[2] -> x_ini = 300;
-	monsters[2] -> x_dest = 600;
-	monsters[2] -> y_ini = 0;
-	monsters[2] -> y_dest = 0;
-	monsters[2] -> stage = 2;*/
+
 }
 
 int checa_hero(int i)
@@ -602,7 +575,7 @@ void inicia_mobs()
 						hero_ -> x--;
 				}
 			}
-			else if (i == 10)
+			else if (i == 9)
 			{
 				//Muda a direção do deslocamento horizontal
 				if (obstacles[i] -> y >= SUPER_GROUND - obstacles[i] -> rh)
@@ -933,25 +906,29 @@ void UpdateFloor()
 	}
 	for (int i = 0; i < NUM_OBS; i++)
 	{
-
-		if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+		if ((stage == obstacles[i] -> stage) && obstacles[i] -> using) 
 		{
-			if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
-				{
-					out = 1;
-					//Em cima da caixa
-					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+			if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
+			{
+				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 					{
-						out = 0;
+						out = 1;
+						//Em cima da caixa
+						if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+						{
+							out = 0;
+						}
 					}
-				}
-				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
-				{
-					//printf("xd\n");
-					//Em baixo da caixa
-					out = 1; 
-				}
-		}		
+					else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
+					{
+						//printf("xd\n");
+						//Em baixo da caixa
+						out = 1; 
+					}
+			}		
+		}
+
+		
 	}
 	if (out)
 	{
@@ -1028,7 +1005,8 @@ void hit()
 			{
 				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y + 5))
 				{
-					if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y + 5) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
+					int pos =hero_ -> y + hero_ -> rh;
+					if ((pos >=  obstacles[i] -> y - 5 ) && (pos <= obstacles[i] -> y + (obstacles[i] -> rh/3))) 
 					{
 						FLOOR = obstacles[i] -> y;
 						hero_ -> dy = 0;
@@ -1064,7 +1042,7 @@ void hit()
 			{
 				//Em cima da caixa
 				int pos =hero_ -> y + hero_ -> rh;
-				if ( (pos >= monsters[i] -> y) && (pos <= monsters[i] -> y + (monsters[i]->rh/3))  ) 
+				if ((pos >= monsters[i] -> y) && (pos <= monsters[i] -> y + (monsters[i]->rh/3))) 
 				{
 						monsters[i] -> life--;
 						if (monsters[i] -> life == 0 )
@@ -1148,7 +1126,7 @@ void state_init(ALLEGRO_FONT* font)
 	              fprintf(stderr,
 	                 "al_play_sample_data failed, perhaps too many sounds\n");
 	           }
-	stage = 4;
+	stage = 0 ;
 	PONTUACAO = 0;
 	if (!playing)
 		alocador();
@@ -1251,6 +1229,36 @@ void state_close()
 	al_destroy_bitmap(end_game);
 	al_flip_display();
 }
+void show_scores()
+{
+	ALLEGRO_FONT* font;
+	font = al_create_builtin_font();
+	if(!font)
+	{
+    	fprintf(stderr, "Não foi possível iniciar a fonte");
+	    exit(1);
+	}
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	int offset = 10;
+	for (int i = 0; i < cont_scores; i++)
+	{
+		al_draw_text(font, al_map_rgb(255, 104, 1), 400,10+offset, 0,h_score[i] -> nome);
+
+		char score_ac[25];
+		snprintf(score_ac,25,"%d", h_score[i] -> score);
+		al_draw_text(font, al_map_rgb(255, 104, 1), 700,10+offset, 0,score_ac);
+		offset+=20;
+	}
+	al_destroy_font(font);
+	al_flip_display();
+}
+
+
+
+
+
+
+
 
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
@@ -1260,16 +1268,18 @@ void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
     strcpy(us -> nome, nome);
     us -> score = PONTUACAO;
 
+    char text[100] = "Digite seu nome: ";
 	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_text(font, al_map_rgb(255, 104, 1), 300,180, 0,text);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 300,250, 0,nome);
 	al_flip_display();
 }
-
 void ler_file_scores()
 {
 	h_score = malloc(11*sizeof(h_score));
-		for (int i = 0; i < 11; i++)
+		for (int i = 0; i < 11; i++){
 			h_score[i] = malloc(100*sizeof(h_score));
+		}
 	char c;
 	FILE *file_score;
 	file_score = fopen("scores","a+");
@@ -1279,26 +1289,45 @@ void ler_file_scores()
 	  fscanf(file_score, "%s %d", h_score[cont_scores] -> nome, &h_score[cont_scores] -> score);
 	  cont_scores++;
 	}
-	printf("%s %d \n",h_score[0] -> nome,h_score[0] -> score );
+
+
 	fclose(file_score);
+	//printf("%d\n",cont_scores );
 }
-int compare (const void * a, const void * b)
+int compare(const void *a, const void *b)
 {
-
-  user_score *scoreA = (user_score *)a;
-  user_score *scoreB = (user_score *)b;
-
-  return ( scoreB->score - scoreA->score );
-}void escreve_file_scores()
+    const user_score *a1 = *(const user_score **)a;
+    const user_score *b1 = *(const user_score **)b;
+    if(a1 -> score > b1 -> score)
+    	return -1;
+    else if(a1 -> score < b1 -> score)
+    	return 1;
+    else
+    	return 0;
+}
+void escreve_file_scores()
 {
+	if (cont_scores > 10)
+		cont_scores = 10;
+	h_score[cont_scores] -> score = us -> score;
+	if (strcmp(us -> nome, "") == 0)
+		strcpy(us -> nome, "undefined");
+	
+	strcpy(h_score[cont_scores] -> nome, us -> nome);
+	cont_scores++;
 
-	h_score[0] -> score = us -> score;
-	strcpy(h_score[0] -> nome, us -> nome);
+	qsort(h_score,cont_scores,sizeof(h_score),compare);
 
-	qsort(h_score, cont_scores, sizeof(user_score), compare);
-	for (int i = 0; i < 10; i++)
+	FILE *file_score;
+	file_score = fopen("scores","w+");
+	
+	for (int i = 0; i < cont_scores; i++)
 	{
-		printf("%s %d\n",h_score[i] -> nome,h_score[i] -> score);
+	 	fprintf(file_score,"%s %d",h_score[i] -> nome,h_score[i] -> score);
+	 	if (i < cont_scores-1)
+	 		fprintf(file_score,"\n");
 	}
+	fclose(file_score);
+
 	
 }
