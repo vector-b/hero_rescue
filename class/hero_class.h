@@ -3,6 +3,10 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
+#include "allegro5/allegro_font.h"
+#include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro_ttf.h"
+
 #ifndef __HEROR__
 #define __HEROR__
 
@@ -69,7 +73,7 @@ direcao dir;
 int fim;
 
 
-  
+void inicia_fontes();
 void create_objects();
 void make_background();
 void make_hero();

@@ -7,6 +7,9 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
+#include "allegro5/allegro_font.h"
+#include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro_ttf.h"
 #define RESERVED_SAMPLES   16
 #define MAX_SAMPLE_DATA    10
 #define WIDTH 800
@@ -59,8 +62,17 @@ int main()
       fprintf(stderr,"couldn't initialize image addon\n");
       return 1;
   }
-
-    
+  if (!al_init_font_addon())
+  {
+      fprintf(stderr,"couldn't initialize ttf addon\n");
+      return 1;
+  }
+  if (!al_init_ttf_addon())
+  {
+      fprintf(stderr,"couldn't initialize ttf addon\n");
+      return 1;
+  }
+  inicia_fontes();
 
     //Inicia o Display
     disp = al_create_display(WIDTH, HEIGHT);

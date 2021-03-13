@@ -5,11 +5,14 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
+#include "allegro5/allegro_font.h"
+#include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro_ttf.h"
 
 #ifndef __VAR__
 #define __VAR__
 
-
+#define FONT_PIX		"fonts/pixeboy.ttf"
 //Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.bmp"
 #define BRIDGE 			"img/bridge.bmp"
@@ -97,6 +100,9 @@ ALLEGRO_SAMPLE *background_sound;
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
+
+ALLEGRO_FONT* title_font		= NULL;
+ALLEGRO_FONT* score_font		= NULL;
 
 hero 	*hero_     				= NULL;
 obs 	**obstacles 			= NULL;

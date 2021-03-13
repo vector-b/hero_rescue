@@ -5,7 +5,26 @@
 #include <allegro5/allegro_image.h>
 #include "allegro5/allegro_audio.h"
 #include "allegro5/allegro_acodec.h"
+#include "allegro5/allegro_font.h"
+#include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro_ttf.h"
 
+
+void inicia_fontes(){
+
+	 title_font = al_load_ttf_font(FONT_PIX, 40, 0);
+	if (!title_font)
+	{
+	    fprintf(stderr, "Não foi possivel carregar a fonte" );
+	    exit(1);
+	}
+	score_font = al_load_ttf_font(FONT_PIX, 15, 0);
+	if (!score_font)
+	{
+	    fprintf(stderr, "Não foi possivel carregar a fonte" );
+	   	exit(1);
+	}
+}
 
 /*Inicia recursos principais*/
 
@@ -241,14 +260,14 @@ void cria_monstros_estruturas()
 	monsters[0] -> life = 1;
 	monsters[0] -> w = 315;
 	monsters[0] -> h = 329;
-	monsters[0] -> x = 550;
+	monsters[0] -> x = 450;
 	monsters[0] -> rw = 50;
 	monsters[0] -> rh = 50;
 	monsters[0] -> y = SUPER_GROUND - monsters[0] -> rh;
 	monsters[0] -> dx,monsters[0] -> dy = 0;
 	monsters[0] -> vai = 0;
 	monsters[0] -> x_ini = 300;
-	monsters[0] -> x_dest = 550;
+	monsters[0] -> x_dest = 450;
 	monsters[0] -> y_ini = 0;
 	monsters[0] -> y_dest = 0;
 	monsters[0] -> stage = 1;
@@ -1231,25 +1250,22 @@ void state_close()
 }
 void show_scores()
 {
-	ALLEGRO_FONT* font;
-	font = al_create_builtin_font();
-	if(!font)
-	{
-    	fprintf(stderr, "Não foi possível iniciar a fonte");
-	    exit(1);
-	}
-	al_clear_to_color(al_map_rgb(0, 0, 0));
+	
+	al_clear_to_color(al_map_rgb(0, 35, 8));
+
+	al_draw_text(title_font, al_map_rgb(226, 233, 5), 250,100, 0,"HIGH - SCORES");
+	
 	int offset = 10;
 	for (int i = 0; i < cont_scores; i++)
 	{
-		al_draw_text(font, al_map_rgb(255, 104, 1), 400,10+offset, 0,h_score[i] -> nome);
+		al_draw_text(score_font, al_map_rgb(255, 255, 255), 285,150+offset, 0,h_score[i] -> nome);
 
 		char score_ac[25];
 		snprintf(score_ac,25,"%d", h_score[i] -> score);
-		al_draw_text(font, al_map_rgb(255, 104, 1), 700,10+offset, 0,score_ac);
+		al_draw_text(score_font, al_map_rgb(255, 255, 255), 425,150+offset, 0,score_ac);
 		offset+=20;
 	}
-	al_destroy_font(font);
+	//al_destroy_font(font);
 	al_flip_display();
 }
 
