@@ -1449,7 +1449,11 @@ void state_play(ALLEGRO_FONT* font)
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,20, 0,estagio);
-	//al_draw_text(font, al_map_rgb(255, 104, 1), 700,30, 0,fps_demo);
+	if (god_mode)
+		al_draw_text(font, al_map_rgb(255, 104, 1), 676,30, 0,"GOD MODE: ON");
+	else
+		al_draw_text(font, al_map_rgb(255, 104, 1), 676,30, 0,"GOD MODE: OFF");
+		//al_draw_text(font, al_map_rgb(255, 104, 1), 700,30, 0,fps_demo);
 	
 
 
