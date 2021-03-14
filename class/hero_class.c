@@ -77,39 +77,11 @@ void make_background()
         exit(1);
     }
 }
-void inicia_escadas()
-{
-	stairs[0] -> stage = 4;
-	stairs[0] -> w = 80;
-	stairs[0] -> h = 232;
-	stairs[0] -> rw = 80;
-	stairs[0] -> rh = 232;
-	stairs[0] -> x = 150;
-	stairs[0] -> y = GROUND - stairs[0] -> rh ;
-	stairs[0] -> dy, stairs[0] -> dx = 0;
-	stairs[0] -> stage = 4;
-}
-void hero_updown()
-{
-	for (int i = 0; i < NUM_STAIRS; i++)
-	{	
-		if (stage == stairs[i] -> stage)
-		{
-			/*if(inside_stairs(i))
-			{
-				printf("eba\n");
-			}*/
-		}
-		else
-		{
-			//printf("ta nao\n");
-		}
-		
-	}
-}
+
 
 /*Criação da estruturas e monstros*/
 
+//Aloca objetos e monstros
 void alocador()
 {
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
@@ -119,13 +91,11 @@ void alocador()
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
 		monsters[i] = malloc(3000*sizeof(monsters[i]));
-
-	stairs = malloc(sizeof(stairs));
-	stairs[0] = malloc(80*sizeof(stairs));
 }
 //Cria manualmente os obstaculos do jogo (estruturas físicas)
 void create_objects()
 {
+	//Cria manualmente todos os objetos do jogo, tais como caixas ou plataformas
 	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 145;
 	obstacles[0] -> h = 66;
@@ -292,6 +262,7 @@ void create_objects()
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
 {
+	//Cria manualmente os monstros do jogo
 	monsters[0] -> using = 1;
 	monsters[0] -> type = 1;
 	monsters[0] -> live = 1;
@@ -418,7 +389,7 @@ void cria_monstros_estruturas()
   	monsters[6] -> using = 1;
 	monsters[6] -> type = 5;
 	monsters[6] -> live = 1;
-	monsters[6] -> life = 5;
+	monsters[6] -> life = 10;
 	monsters[6] -> w = 38;
 	monsters[6] -> h = 60;
 	monsters[6] -> x = 540;
@@ -428,8 +399,8 @@ void cria_monstros_estruturas()
 	monsters[6] -> dx,monsters[6] -> dy = 0;
 	monsters[6] -> vai = 0;
 	monsters[6] -> sobe = 0;
-	monsters[6] -> x_ini = 300;
-	monsters[6] -> x_dest = 800 -100- monsters[6] -> rw;
+	monsters[6] -> x_ini = 250;
+	monsters[6] -> x_dest = 600- monsters[6] -> rw;
 	monsters[6] -> y_ini = 0;
 	monsters[6] -> y_dest = 0;
 	monsters[6] -> stage = 4;
@@ -450,7 +421,7 @@ void cria_monstros_estruturas()
 	monsters[7] -> vai = 0;
 	monsters[7] -> sobe = 0;
 	monsters[7] -> x_ini = 100;
-	monsters[7] -> x_dest = 800 - monsters[7] -> rw;
+	monsters[7] -> x_dest = 800 -  monsters[7] -> rw;
 	monsters[7] -> y_ini = 0;
 	monsters[7] -> y_dest = 0;
 	monsters[7] -> stage = 3;
@@ -491,7 +462,7 @@ void cria_monstros_estruturas()
 	monsters[9] -> dx,monsters[9] -> dy = 0;
 	monsters[9] -> vai = 0;
 	monsters[9] -> sobe = 0;
-	monsters[9] -> x_ini = 500;
+	monsters[9] -> x_ini = 100;
 	monsters[9] -> x_dest = 300;
 	monsters[9] -> y_ini = 0;
 	monsters[9] -> y_dest = 0;
@@ -500,6 +471,7 @@ void cria_monstros_estruturas()
   	monsters[9] -> num_sprite = 0;
 }
 
+//Checa se o heroi esta em cima de um obstaculo especifico
 int checa_hero(int i)
 {
 	if ((hero_ -> x + hero_ -> rw >= obstacles[i] -> x + 1) && (hero_ -> x <= obstacles[i] -> x + obstacles[i] -> rw - 1))
@@ -512,6 +484,7 @@ void inicia_mobs()
 {
 	for (int i = 0; i < NUM_MON; i++)
 	{
+		//Para cada tipo de monstro realiza uma transição diferente entre as sprites
 		if ((stage == monsters[i] -> stage) && (monsters[i] -> using))
 		{
 			//Muda a direção do deslocamento horizontal
@@ -695,6 +668,7 @@ void inicia_mobs()
 	}
 	for (int i = 0; i < NUM_OBS; i++)
 	{
+		//Movimenta os obstaculos que se mexem
 		if (stage == obstacles[i] -> stage)
 			if (i == 8)
 			{
@@ -770,6 +744,7 @@ void write_obstacles()
 	inicia_mobs();
 	for (int i = 0; i < NUM_MON; i++)
 	{
+		//Para cada TIPO de monstor, imprime sua sprite
 		if ((stage == monsters[i] -> stage) && (monsters[i] -> using))
 			if (monsters[i] -> live == 1)
 				if (monsters[i] -> type == 1)
@@ -802,8 +777,10 @@ void write_obstacles()
 				}
 	}		
 }
+//Realiza a morte do personagem
 void morrer()
 {
+	//Sonzinho pós-morte
 	al_stop_samples();
 	death_sound = al_load_sample("song/death_sound.wav");
 					if (!death_sound) 
@@ -818,8 +795,10 @@ void morrer()
 }
 //Escreve o herói em sua respectiva posição
 void draw_hero()
-{	if (morto)
+{	
+	if (morto)
 	{
+		//Se o personagem estiver morrendo, use a animação de morte
 		conta_morto++;
 		if((conta_morto % 6) == 0 )
 			checa_morte++;
@@ -857,6 +836,7 @@ void draw_hero()
 	}
 	else if (jumping)
 	{
+		//Animação de pulo
 		int chosen = 1;
 		if (hero_ -> y  > FLOOR + (hero_ -> dy/4))
 		{
@@ -893,6 +873,7 @@ void draw_hero()
 	}
 	else if (hero_ -> dy < 0)
 	{
+		//Animação correr pra esquerda
 		char filename[100] = "";
 		snprintf(filename, 12, "%d.png", 0);
 
@@ -916,6 +897,7 @@ void draw_hero()
 	}
 	else if (hero_ -> dx == 0)
 	{
+		//Animação parado
 			checa_sprite_hero++;
 			if((checa_sprite_hero % 25) == 0 )
 				num_sprite_hero++;
@@ -953,6 +935,7 @@ void draw_hero()
 	}
 	else if(hero_ -> dx > 0 )
 	{
+		//Animação correr pra direita
 		int chosen = 1;
 		if (running <= 6)
 			chosen = running;
@@ -1006,12 +989,12 @@ void draw_hero()
 	}
 }
 
-
 /* Funções de movimentação de personagem */
 
 //Decise a direção e velocidade de acordo com o botão pressionado 
 void move_side()
 {
+	//Recebe das teclas pressionadas a direção e soma constantes no dx/dy em velocidade 
 	if (dir != NONE)
 	{
 		if(dir == ESQUERDA){
@@ -1039,8 +1022,8 @@ void move_side()
 			hero_ -> dx += CONSTANTE_X;
 			last_right = 1;
 		}
-		else if(dir == BAIXO)
-			hero_ -> dy += CONSTANTE_Y;
+		/*else if(dir == BAIXO)
+			hero_ -> dy += CONSTANTE_Y;*/
 	}
 	dir = NONE;
 }
@@ -1081,20 +1064,20 @@ void delta_transform()
 	}
 }
 
-
 //Simula uma gravidade que puxa o heroi em situações necessárias
 void gravity_check()
 {
+	//Se for maior que o limite da tela = morto
 	if (hero_ -> y >= 500){
 		hero_ -> live = 0;
 		morrer();
 	}
-
+	//Corrigi deslocamento vertical 
 	if (hero_ -> dy > 0)
 		hero_ -> dy =0;
 	int distancia_floor_hero = 0;
 	distancia_floor_hero = FLOOR - hero_ -> rh;
-
+	//Usa a constante G caso o usuario esteja fora do chão e pulando 
 	if ((hero_ -> y  + hero_ -> rh < FLOOR) && jumping == 0)
 	{
 		hero_ -> y += CONSTANTE_G;
@@ -1106,6 +1089,7 @@ void gravity_check()
 //Atualiza o "chão" do personagem
 void UpdateFloor()
 {
+	//Atualiza o "chão" do personagem com base na sua posição (dentro ou fora de um objeto/obstaculo)
 	int out = 1;
 	if (hero_ -> y + hero_ -> rh == FLOOR)
 	{
@@ -1168,7 +1152,8 @@ void CameraUpdate()
 		snprintf(number_file, 12, "%d.png", checa_wp);
 		strcat(filename, STREET_FOLDER);
 		strcat(filename,number_file);
-		
+
+		//Segredo
 		ALLEGRO_BITMAP *easter_back = NULL;
 		easter_back = al_load_bitmap(filename);
 		if (!easter_back)
@@ -1213,13 +1198,31 @@ void CameraUpdate()
 		al_destroy_bitmap(bridge_back);
 	}	
 }
+//Inicia a música
+void play_init()
+{
+	//Toca a musica da floresta 
+	char filename[100] ="song/forest.wav";
+	background_sound = al_load_sample(filename);
+	if (!background_sound) 
+	{
+		fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+		exit(1);
+	}
+	if (!al_play_sample(background_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
+	              fprintf(stderr,
+	                 "al_play_sample_data failed, perhaps too many sounds\n");
+	           }
+}
 //Realiza alterações de acordo com o stage atual
 void stages_()
 {
+	//Altera o Ground do stage 3
 	if(stage == 3)
 		GROUND = 500 + hero_ -> rh;
 	else
 		GROUND = 435;
+	//Caso a vida do heroi chegue a 0, o estado muda pra FIMJOGO
 	if (hero_ -> live == 0)
 	{
 		estado = FIMJOGO;
@@ -1251,7 +1254,7 @@ void stages_()
 	}
 	if (hero_ -> x < 0 )
 	{
-		
+		//Checa se o usuario pode acessar a >>area proibida<<
 		if(((stage == 0) && OVO) || stage != 0)
 		{
 
@@ -1302,6 +1305,7 @@ void hit()
 					int pos =hero_ -> y + hero_ -> rh;
 					if ((pos >=  obstacles[i] -> y - 5 ) && (pos <= obstacles[i] -> y + (obstacles[i] -> rh/3))) 
 					{
+						//ALtera o FLOOR do personagem pra cima do objeto/obstaculo
 						FLOOR = obstacles[i] -> y;
 						hero_ -> y = obstacles[i] -> y - hero_ -> rh;
 						jumping = 0;
@@ -1337,6 +1341,7 @@ void hit()
 				int pos =hero_ -> y + hero_ -> rh;
 				if ((pos >= monsters[i] -> y) && (pos <= monsters[i] -> y + (monsters[i]->rh/3))) 
 				{
+					//O usuario pulou em cima do monstro
 						hero_ -> dy -= CONSTANTE_Y;
 						monsters[i] -> life--;
 
@@ -1355,6 +1360,7 @@ void hit()
 							           }
 							short type;
 							type = monsters[i] -> type;
+							//Concede pontuação de acordo com o monstro morto
 							if (type == 1 || type == 2 )
 								PONTUACAO+=5;
 							else if(type == 3)
@@ -1365,6 +1371,7 @@ void hit()
 								PONTUACAO+=50;
 						}
 						else{
+							//Caso atinja um monstro mas não o mate
 							hito  = al_load_sample("song/hit.wav");
 							if (!hito ) 
 							{
@@ -1412,6 +1419,7 @@ void hit()
 		
 	}
 }
+//Desaloca as estruturas utilizadas
 void desalocador()
 {
 	for (int i = 0; i < NUM_MON; i++)
@@ -1422,11 +1430,14 @@ void desalocador()
 		free(obstacles[i]);
 	free(obstacles);
 }
-/*Funções dos estados do */
+/*Funções dos estados*/
+
+//Do Nothing
 void state_serve(ALLEGRO_EVENT *evento)
 {	
 
 }
+//Função pro respawn do user (foi desativo devido a problemas de desempenho)
 void repair()
 {
 	stage = 0;
@@ -1440,44 +1451,53 @@ void repair()
 	OVO = 0;
 	stage = 0;
 }
-
-void play_init()
+//Exibe informação do jogo
+void info()
 {
-	char filename[100] ="song/forest.wav";
-	background_sound = al_load_sample(filename);
-	if (!background_sound) 
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	ALLEGRO_BITMAP *help = NULL;
+	help = al_load_bitmap(HERO_HELP);
+	if (!help)
 	{
-		fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+		fprintf(stderr, "Erro ao ler imagem de ajuda\n");
 		exit(1);
 	}
-	if (!al_play_sample(background_sound, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
-	              fprintf(stderr,
-	                 "al_play_sample_data failed, perhaps too many sounds\n");
-	           }
+	al_draw_bitmap(help, 0, 0, 0);
+	al_destroy_bitmap(help);
+	al_flip_display();
 }
+
 //Estado inicial que procura inicializar recursos do game
 void state_init(ALLEGRO_FONT* font)
 {
-	//Puxa a música e inicia 
+	//Inicia como não-morto
 	morto = 0;
+	//Para todas as músicas
 	al_stop_samples();
+	//Inicia a condiçao do ovo de pascoa
 	OVO = 0;
+	//Inicia a música tema
 	play_init();
+	//Zera a pontuação e estagio
 	stage = 0;
 	PONTUACAO = 0;
 	if (!playing)
 		alocador();
-
+	//Cria os objetos do jogo
 	create_objects();
-	inicia_escadas();
+	//Cria o background e destroi após 
 	make_background();
 	al_destroy_bitmap(background);
+	//Cria o menu e destroi após 
 	make_menu();
 	al_draw_scaled_bitmap(menu,0,0,800,500,0,0,800,500,0);
 	al_destroy_bitmap(menu);
+	//Cria o heroi
 	make_hero(hero_);
+	//Cria monstros
 	cria_monstros_estruturas();
 	al_flip_display();
+	//Define o Chão inicial
 	FLOOR = SUPER_GROUND;
 	estado = SERVINDO;
 }
@@ -1508,7 +1528,7 @@ void state_play(ALLEGRO_FONT* font)
     	move_side();
     }
 	
-	//printf("%d e %d\n",hero_ -> y, hero_ ->dy );
+	//Exibe Dados adicionais no cnato superior
 	char posY[50];
 	snprintf(posY,25,"Y: %d / DY: %d",hero_ -> y, hero_ -> dy);
 	char posX[50];
@@ -1523,6 +1543,7 @@ void state_play(ALLEGRO_FONT* font)
 
 	//Transforma o delta y/x em deslocamento
 	delta_transform();
+	//Mostra as placas no primeiro estagio
 	if (stage == 0)
 	{
 		ALLEGRO_BITMAP *board_left = NULL;
@@ -1571,6 +1592,7 @@ void state_play(ALLEGRO_FONT* font)
 	if (!morto)
 		hit();
 	
+	//Exibe as informações supracitadas na tela
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0,text);
 	//al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
 	//al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
@@ -1582,14 +1604,12 @@ void state_play(ALLEGRO_FONT* font)
 		al_draw_text(font, al_map_rgb(255, 104, 1), 676,30, 0,"GOD MODE: OFF");
 		//al_draw_text(font, al_map_rgb(255, 104, 1), 700,30, 0,fps_demo);
 	
-
-
-
 	al_flip_display();
 }
 //Estado de fechar o jogo em caso de perda
 void state_close()
 {
+	//Finaliza o jogo e exibe a imagem de derrota
 	playing = 1;
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	end_game =al_load_bitmap(END_GAME_IMAGE);
@@ -1602,6 +1622,7 @@ void state_close()
 	al_destroy_bitmap(end_game);
 	al_flip_display();
 }
+//Exibe o placar de high_scores
 void show_scores()
 {
 	al_clear_to_color(al_map_rgb(0, 35, 8));
@@ -1618,9 +1639,12 @@ void show_scores()
 		al_draw_text(score_font, al_map_rgb(255, 255, 255), 425,150+offset, 0,score_ac);
 		offset+=20;
 	}
+
+	al_draw_text(title_font, al_map_rgb(242, 238, 113), 25,443, 0,"M - MENU");
 	//al_destroy_font(font);
 	al_flip_display();
 }
+//Mostra o placar de ajuda, disponivel durante o game
 void help()
 {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -1633,9 +1657,13 @@ void help()
 	}
 	al_draw_bitmap(ajuda, 0, 0, 0);
 	al_flip_display();
+	al_destroy_bitmap(ajuda);
+
 }
+//Realiza o fim de jogo caso o player vença e chegue
 void venceu()
 {
+
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	//al_draw_text(score_font, al_map_rgb(255, 255, 255), 300,150, 0,"VOCE COMPLETOU SUA JORNADA!");
 	//al_draw_text(score_font, al_map_rgb(255, 255, 255), 250,200, 0,"PRESSIONE ESC PARA SAIR E SALVAR SEU SCORE!");
@@ -1653,7 +1681,7 @@ void venceu()
 
 	 //Registra os eventos do programa
 	 al_register_event_source(q, al_get_keyboard_event_source());
-
+	 //Recebe o nome do player e registra na tabela
 	 int done = 0;
 	 while(!done)
 	 {
@@ -1690,6 +1718,7 @@ void venceu()
 	  escreve_file_scores();
 	  estado = HIGH_SCORES;
 }
+//Atribui as letras que o player digita no nome dele 
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
 	char nome[100];
@@ -1704,6 +1733,7 @@ void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 	al_draw_text(name_font, al_map_rgb(255, 104, 1), 330,250, 0,nome);
 	al_flip_display();
 }
+//Le a tabela de scores
 void ler_file_scores()
 {
 	h_score = malloc(11*sizeof(h_score));
@@ -1719,11 +1749,9 @@ void ler_file_scores()
 	  fscanf(file_score, "%s %d", h_score[cont_scores] -> nome, &h_score[cont_scores] -> score);
 	  cont_scores++;
 	}
-
-
 	fclose(file_score);
-	//printf("%d\n",cont_scores );
 }
+//Função compare usada pelo qsort
 int compare(const void *a, const void *b)
 {
     const user_score *a1 = *(const user_score **)a;
@@ -1735,6 +1763,7 @@ int compare(const void *a, const void *b)
     else
     	return 0;
 }
+//Escreve no arquivo a nova tabela de scores
 void escreve_file_scores()
 {
 	if (cont_scores > 10)
@@ -1745,9 +1774,9 @@ void escreve_file_scores()
 	
 	strcpy(h_score[cont_scores] -> nome, us -> nome);
 	cont_scores++;
-
+	//Usa o qsort pra ordernar a tabela em maior -> menor
 	qsort(h_score,cont_scores,sizeof(h_score),compare);
-
+	//Imprime a tabela no arquivo scores
 	FILE *file_score;
 	file_score = fopen("scores","w+");
 	

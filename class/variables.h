@@ -12,6 +12,7 @@
 #ifndef __VAR__
 #define __VAR__
 
+//Font
 #define FONT_PIX		"fonts/pixeboy.ttf"
 //Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.bmp"
@@ -28,7 +29,7 @@
 #define RUN_RIGHT 		"img/run_right.png"
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
-
+//Pastas de Objetos e MOnstros
 #define STREET_FOLDER	"img/sf_png/"
 #define OBJ_FOLDER 		"img/objects/"
 #define MOB_IMAGE		"img/mob/"
@@ -42,7 +43,8 @@
 #define GHOST_RIGHT		"img/ghost_right/"
 #define MOB_BAT			"img/bat/"
 #define FLOOR_STG3		"img/stage_3/floor_bridge.png"
-
+#define HERO_HELP		"img/HERO_HELP.png"
+//Pastas do Heroi
 #define RUNNING_LEFT	"img/hero_left/running/"
 #define RUNNING_RIGHT	"img/hero/running/"
 #define JUMP_LEFT		"img/hero_left/jump/"
@@ -55,8 +57,8 @@
 #define HERO_IMAGE		"img/hero/"
 #define HERO_IMAGE_LEFT	"img/hero_left/"
 
+//Constantes 
 #define SUPER_GROUND 435
-
 #define CONSTANTE_X 10
 #define CONSTANTE_Y 160
 #define CONSTANTE_G 10
@@ -130,7 +132,6 @@ ALLEGRO_FONT* brazil_font		= NULL;
 hero 	*hero_     				= NULL;
 obs 	**obstacles 			= NULL;
 monster **monsters 				= NULL;
-plat 	**stairs 				= NULL;
 user_score **h_score			= NULL;
 user_score *us   				= NULL;
 

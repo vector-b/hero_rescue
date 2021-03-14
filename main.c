@@ -105,6 +105,7 @@ int main()
 
 
 
+    //Muda o estado para inicio e inicia o timer 
     estado = INICIO;
     al_start_timer(timer);
 
@@ -119,11 +120,12 @@ int main()
       fps = 1/(delta*1000);
       old_time = new_time;
       ALLEGRO_EVENT evento;
-
-        al_wait_for_event(queue, &evento);
-
+      //Aguarda um evento 
+       al_wait_for_event(queue, &evento);
+       //Quando timer for ativado o evento do jogo funciona
     	if(evento.type == ALLEGRO_EVENT_TIMER)
     	{
+        //Swithc ente estados
           	switch(estado)
           	{
           		case INICIO:
@@ -144,6 +146,9 @@ int main()
               case 9:
                 repair();
                 break;
+              case 10:
+                info();
+                break;
           		default: break ;
           	}
 
@@ -151,6 +156,7 @@ int main()
         //Mudar de KEY_DOWN para KEY_CHAR pra ver o hero se tornar o flash
         else if(evento.type == ALLEGRO_EVENT_KEY_DOWN)
         {
+          //Ifs para a mudança de estados
             if(evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
                 break;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) &&(estado == SERVINDO))
@@ -159,6 +165,8 @@ int main()
                estado = HIGH_SCORES;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_M))
                estado = INICIO;
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_H) && (estado == SERVINDO))
+               estado = INFO;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_F1) && (estado != 6))
             {
               if (estado != SERVINDO)
@@ -202,13 +210,10 @@ int main()
    
 
    
-
-    
+    //Destroi as estruturas allegro utilizadas
     al_destroy_timer(timer);
     al_destroy_display(disp);
     al_destroy_event_queue(queue);
-
-
-
-	return 0;
+    desalocador();
+    return 0;
 }
