@@ -71,6 +71,7 @@ typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
 double fps;
 direcao dir;
 int fim;
+int god_mode;
 
 
 void inicia_fontes();

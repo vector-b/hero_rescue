@@ -987,7 +987,43 @@ void UpdateFloor()
 //Imprime o background correto nas fases 
 void CameraUpdate()
 {
-	if (stage != 3)
+
+	if (stage == -1)
+	{	//STREET_FOLDER;
+		conta_background++;
+		if ((conta_background % 6) == 0)
+			checa_wp++;
+		if (checa_wp >= 4)
+			checa_wp = 0;
+		
+		char filename[100] = "";
+		char number_file[100] = "";
+		snprintf(number_file, 12, "%d.png", checa_wp);
+		strcat(filename, STREET_FOLDER);
+		strcat(filename,number_file);
+		
+		ALLEGRO_BITMAP *easter_back = NULL;
+		easter_back = al_load_bitmap(filename);
+		if (!easter_back)
+		{
+			fprintf(stderr, "DEU ERRO POR");
+			exit(1);
+		}
+		if (conta_background > 500)
+			conta_background = 0;
+		al_draw_scaled_bitmap(easter_back,0,0,800,500,0,0,800,500,0);
+		if (checa_wp == 0)
+			al_draw_text(title_font, al_map_rgb(255, 104, 1), 250,180, 0,"COME TO BRAZIL");
+		else if (checa_wp == 1)
+			al_draw_text(title_font, al_map_rgb(120, 255, 100), 250,180, 0,"COME TO BRAZIL");
+		else if (checa_wp == 2)
+			al_draw_text(title_font, al_map_rgb(255, 0, 100), 250,180, 0,"COME TO BRAZIL");
+		else if (checa_wp == 3)
+			al_draw_text(title_font, al_map_rgb(100, 10, 200), 250,180, 0,"COME TO BRAZIL");
+
+		al_destroy_bitmap(easter_back);
+	}
+	else if (stage != 3)
 	{
 		background=al_load_bitmap(BACKGROUND_FILE);
 		al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
@@ -1012,6 +1048,21 @@ void stages_()
 		estado = FIMJOGO;
 	}
 	if (hero_ -> x > 800){
+		if (stage == -1 )
+		{
+			al_stop_samples();
+			char filename[100] ="song/forest.wav";
+			ipanema = al_load_sample(filename);
+			if (!ipanema) 
+			{
+				fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+				exit(1);
+			}
+			if (!al_play_sample(ipanema, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
+			              fprintf(stderr,
+			                 "al_play_sample_data failed, perhaps too many sounds\n");
+			           }
+		}
 		if (stage != 5)
 		{
 			stage++;
@@ -1026,6 +1077,8 @@ void stages_()
 		{
 			hero_ -> x = 800 - hero_ -> rw;
 		}
+
+		
 		
 	}
 	if (hero_ -> x < 0 )
@@ -1033,6 +1086,22 @@ void stages_()
 		
 		if(((stage == 0) && OVO) || stage != 0)
 		{
+
+			if (stage == 0)
+			{
+				al_stop_samples();
+				char filename[100] ="song/ipanema.wav";
+				ipanema = al_load_sample(filename);
+				if (!ipanema) 
+				{
+					fprintf(stderr, "Could not load sample from '%s'!\n", filename);
+					exit(1);
+				}
+				if (!al_play_sample(ipanema, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
+				              fprintf(stderr,
+				                 "al_play_sample_data failed, perhaps too many sounds\n");
+				           }
+			}
 			stage--;
 			if(stage !=  3)
 			GROUND = SUPER_GROUND;
@@ -1040,6 +1109,10 @@ void stages_()
 			hero_ -> y = GROUND - hero_ -> rh;
 			hero_ -> dy = 0;
 			hero_ -> dx = 0;
+		}
+		else if(stage == 0)
+		{
+			hero_ -> x = 0;
 		}
 		
 		
@@ -1140,15 +1213,18 @@ void hit()
 				else
 				{
 					//printf("%d %d\n",hero_ -> y + hero_-> rh, monsters[i] -> y  );
-					hero_ -> live = 0;
-					morrer();
+					if (!god_mode)
+					{
+						hero_ -> live = 0;
+						morrer();
+					}
+					
 				}
 			}
 		}
 		
 	}
 }
-
 void desalocador()
 {
 	for (int i = 0; i < NUM_MON; i++)
@@ -1160,7 +1236,6 @@ void desalocador()
 	free(obstacles);
 }
 /*Funções dos estados do */
-
 void state_serve(ALLEGRO_EVENT *evento)
 {	
 }
@@ -1169,7 +1244,7 @@ void state_init(ALLEGRO_FONT* font)
 {
 	//Puxa a música e inicia 
 	al_stop_samples();
-	OVO = 1;
+	OVO = 0;
 	char filename[100] ="song/forest.wav";
 	background_sound = al_load_sample(filename);
 	if (!background_sound) 
@@ -1264,6 +1339,10 @@ void state_play(ALLEGRO_FONT* font)
 		if (hero_ -> x >= 800-(rw_house) + (rw_house/4) )
 			estado = VENCEU;
 	}
+	else if (stage == -1)
+	{
+		
+	}
     //Desenha o personagem controlavel
 	draw_hero();
 	//Checa Hit
@@ -1335,15 +1414,13 @@ void venceu()
 
 	al_flip_display();
 }
-
-
-
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
 	char nome[100];
 	us = malloc(100*sizeof(h_score));
     strcpy(nome, al_cstr(name));
     strcpy(us -> nome, nome);
+    us -> score = PONTUACAO;
 
     char text[100] = "Digite seu nome: ";
 	al_clear_to_color(al_map_rgb(0, 35, 8));
@@ -1405,6 +1482,4 @@ void escreve_file_scores()
 	 		fprintf(file_score,"\n");
 	}
 	fclose(file_score);
-
-	
 }

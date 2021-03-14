@@ -15,10 +15,10 @@
 #define MAX_LEN 5
 #define WIDTH 800
 #define HEIGHT 500
-
 int old_state;
 int main()
 {
+  god_mode = 0;
   ler_file_scores();
 
   fim = 0;
@@ -167,6 +167,13 @@ int main()
                   estado = old_state;
               }
              
+            }
+            else if ((evento.keyboard.keycode == ALLEGRO_KEY_G))
+            {
+              if (god_mode)
+                god_mode = 0;
+              else
+                god_mode = 1;
             }
             else if(estado == JOGANDO)
             {

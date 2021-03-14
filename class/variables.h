@@ -29,6 +29,7 @@
 #define RUN_LEFT 		"img/run_left.png"
 #define H_LEFT 			"img/hero_left.png"
 
+#define STREET_FOLDER	"img/sf_png/"
 #define OBJ_FOLDER 		"img/objects/"
 #define MOB_IMAGE		"img/mob/"
 #define MOB_IMAGE_RIGHT	"img/mob_right/"
@@ -62,6 +63,9 @@
 #define NUM_MON 8 
 #define NUM_STAIRS 1
 
+
+int conta_background = 0;
+int checa_wp = 0;
 int OVO = 0;
 int GROUND = 435;
 int PONTUACAO = 0;
@@ -103,6 +107,7 @@ ALLEGRO_BITMAP *house 			= NULL;
 
 ALLEGRO_BITMAP *stand 			= NULL;
 ALLEGRO_SAMPLE *background_sound;
+ALLEGRO_SAMPLE *ipanema			= NULL;
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
