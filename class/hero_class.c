@@ -1012,29 +1012,37 @@ void stages_()
 		estado = FIMJOGO;
 	}
 	if (hero_ -> x > 800){
-		stage++;
-		if(stage !=  3)
-			GROUND = SUPER_GROUND;
-		hero_ -> x = 50;
-		hero_ -> y = GROUND - hero_ -> rh;
-		hero_ -> dy = 0;
-		hero_ -> dx = 0;
-	}
-	if (hero_ -> x < 0 )
-	{
-
-		if(stage != 0)
+		if (stage != 5)
 		{
-			stage--;
+			stage++;
 			if(stage !=  3)
 				GROUND = SUPER_GROUND;
-			hero_ -> x = 750;
+			hero_ -> x = 50;
 			hero_ -> y = GROUND - hero_ -> rh;
 			hero_ -> dy = 0;
 			hero_ -> dx = 0;
 		}
 		else
-			hero_ -> x = 0;
+		{
+			hero_ -> x = 800 - hero_ -> rw;
+		}
+		
+	}
+	if (hero_ -> x < 0 )
+	{
+		
+		if(((stage == 0) && OVO) || stage != 0)
+		{
+			stage--;
+			if(stage !=  3)
+			GROUND = SUPER_GROUND;
+			hero_ -> x = 750;
+			hero_ -> y = GROUND - hero_ -> rh;
+			hero_ -> dy = 0;
+			hero_ -> dx = 0;
+		}
+		
+		
 		
 	}
 }
@@ -1161,7 +1169,7 @@ void state_init(ALLEGRO_FONT* font)
 {
 	//Puxa a música e inicia 
 	al_stop_samples();
-
+	OVO = 1;
 	char filename[100] ="song/forest.wav";
 	background_sound = al_load_sample(filename);
 	if (!background_sound) 
@@ -1173,7 +1181,7 @@ void state_init(ALLEGRO_FONT* font)
 	              fprintf(stderr,
 	                 "al_play_sample_data failed, perhaps too many sounds\n");
 	           }
-	stage = 0 ;
+	stage = 0;
 	PONTUACAO = 0;
 	if (!playing)
 		alocador();
@@ -1206,8 +1214,6 @@ void state_play(ALLEGRO_FONT* font)
 	//printf("%s\n",text);
 	//Imprime o background
 	CameraUpdate();
-
-	hero_updown();
 	//Atualiza floor
 	UpdateFloor();
     //Imprime obstaculos
@@ -1244,6 +1250,19 @@ void state_play(ALLEGRO_FONT* font)
 
 		al_destroy_bitmap(board_left);
 		al_destroy_bitmap(board_right);
+	}
+	else if (stage == 5)
+	{
+		OVO = 1;
+		int w_house = 214;
+		int h_house = 154;
+		int rw_house = 214;
+		int rh_house = 154;
+		house = al_load_bitmap(HOUSE);
+		al_draw_scaled_bitmap(house,0,0,w_house,h_house,800-(rw_house) + (rw_house/4),GROUND-rh_house,w_house,h_house,0);
+		al_destroy_bitmap(house);
+		if (hero_ -> x >= 800-(rw_house) + (rw_house/4) )
+			estado = VENCEU;
 	}
     //Desenha o personagem controlavel
 	draw_hero();
@@ -1308,6 +1327,14 @@ void help()
 	al_draw_bitmap(ajuda, 0, 0, 0);
 	al_flip_display();
 }
+void venceu()
+{
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_text(score_font, al_map_rgb(255, 255, 255), 300,150, 0,"VOCE COMPLETOU SUA JORNADA!");
+	al_draw_text(score_font, al_map_rgb(255, 255, 255), 250,200, 0,"PRESSIONE ESC PARA SAIR E SALVAR SEU SCORE!");
+
+	al_flip_display();
+}
 
 
 
@@ -1328,7 +1355,7 @@ void ler_file_scores()
 {
 	h_score = malloc(11*sizeof(h_score));
 		for (int i = 0; i < 11; i++){
-			h_score[i] = malloc(100*sizeof(h_score));
+			h_score[i] = malloc(1000*sizeof(h_score));
 		}
 	char c;
 	FILE *file_score;

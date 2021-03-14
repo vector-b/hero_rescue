@@ -65,7 +65,7 @@ typedef struct obs obs;
 typedef struct hero hero;
 typedef struct plataforma plat;
 typedef struct user_score user_score;
-typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO, HIGH_SCORES, HELP} state ;
+typedef enum {INICIO = 1, SERVINDO, JOGANDO, FIMPART, FIMJOGO, HIGH_SCORES, HELP, VENCEU} state ;
 state estado;
 typedef enum {NONE = 0, ESQUERDA, CIMA, DIREITA, BAIXO} direcao;
 double fps;
@@ -95,6 +95,7 @@ int inside_stairs(int i);
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name);
 void ler_file_scores();
 void escreve_file_scores();
+void venceu();
 
 
 

@@ -140,6 +140,8 @@ int main()
                 show_scores();break;
               case 7:
                 help();break;
+              case 8:
+                venceu();break;
           		default: break ;
           	}
         }

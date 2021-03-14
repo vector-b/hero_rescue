@@ -22,6 +22,7 @@
 #define BOA_RIGHT 		"img/death.png"
 #define BOA_LEFT        "img/safety.png"
 #define HELP_IMAGE		"img/help.png"
+#define HOUSE			"img/house_2.png"
 
 #define HERO_FILE 		"img/hero.png"
 #define RUN_RIGHT 		"img/run_right.png"
@@ -61,6 +62,7 @@
 #define NUM_MON 8 
 #define NUM_STAIRS 1
 
+int OVO = 0;
 int GROUND = 435;
 int PONTUACAO = 0;
 int cont_saltos = 0; 
@@ -96,6 +98,8 @@ ALLEGRO_BITMAP *mob_2			= NULL;
 ALLEGRO_BITMAP *mob_3			= NULL;
 ALLEGRO_BITMAP *mob_4			= NULL;
 ALLEGRO_BITMAP *mob_5			= NULL;
+ALLEGRO_BITMAP *house 			= NULL;
+
 
 ALLEGRO_BITMAP *stand 			= NULL;
 ALLEGRO_SAMPLE *background_sound;
