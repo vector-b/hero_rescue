@@ -456,6 +456,48 @@ void cria_monstros_estruturas()
 	monsters[7] -> stage = 3;
 	monsters[7] -> checa_sprite = 0;
   	monsters[7] -> num_sprite = 0;
+
+  	monsters[8] -> using = 1;
+	monsters[8] -> type = 3;
+	monsters[8] -> live = 1;
+	monsters[8] -> life = 1;
+	monsters[8] -> w = 14;
+	monsters[8] -> h = 11;
+	monsters[8] -> x = 700;
+	monsters[8] -> rw = 28;
+	monsters[8] -> rh = 22;
+	monsters[8] -> y = 370;
+	monsters[8] -> dx,monsters[8] -> dy = 0;
+	monsters[8] -> vai = 0;
+	monsters[8] -> sobe = 0;
+	monsters[8] -> x_ini = 500;
+	monsters[8] -> x_dest = 800 - monsters[8] -> rw;
+	monsters[8] -> y_ini = 0;
+	monsters[8] -> y_dest = 0;
+	monsters[8] -> stage = 2;
+	monsters[8] -> checa_sprite = 0;
+  	monsters[8] -> num_sprite = 0;
+
+  	monsters[9] -> using = 1;
+	monsters[9] -> type = 3;
+	monsters[9] -> live = 1;
+	monsters[9] -> life = 1;
+	monsters[9] -> w = 14;
+	monsters[9] -> h = 11;
+	monsters[9] -> x = 100;
+	monsters[9] -> rw = 28;
+	monsters[9] -> rh = 22;
+	monsters[9] -> y = 370;
+	monsters[9] -> dx,monsters[9] -> dy = 0;
+	monsters[9] -> vai = 0;
+	monsters[9] -> sobe = 0;
+	monsters[9] -> x_ini = 500;
+	monsters[9] -> x_dest = 300;
+	monsters[9] -> y_ini = 0;
+	monsters[9] -> y_dest = 0;
+	monsters[9] -> stage = 2;
+	monsters[9] -> checa_sprite = 0;
+  	monsters[9] -> num_sprite = 0;
 }
 
 int checa_hero(int i)
@@ -507,7 +549,7 @@ void inicia_mobs()
 					num_sprite++;
 
 				char filename[100] = "";
-				snprintf(filename, 12, "%d.bmp", num_sprite);
+				snprintf(filename, 12, "%d.png", num_sprite);
 			
 
 				char path[100] = "";
@@ -517,6 +559,11 @@ void inicia_mobs()
 					strcat(path, MOB_IMAGE);
 				strcat(path, filename);
 				mob = al_load_bitmap(path);
+				if(!mob)
+				{
+					fprintf(stderr, "Erro ao carregar bitmap" );
+					exit(1);
+				}
 				if (num_sprite == 42)
 					num_sprite = 0;
 				if (checa_sprite == 999)
@@ -544,7 +591,11 @@ void inicia_mobs()
 
 				strcat(path, filename);
 				mob_2 = al_load_bitmap(path);
-				
+				if(!mob_2)
+				{
+					fprintf(stderr, "Erro ao carregar bitmap!\n");
+					exit(1);
+				}
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
 
@@ -570,6 +621,11 @@ void inicia_mobs()
 
 				strcat(path, filename);
 				mob_3 = al_load_bitmap(path);
+				if(!mob_3)
+				{
+					fprintf(stderr, "Erro ao carregar bitmap!\n");
+					exit(1);
+				}
 				
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
@@ -595,6 +651,11 @@ void inicia_mobs()
 
 				strcat(path, filename);
 				mob_4 = al_load_bitmap(path);
+				if(!mob_4)
+				{
+					fprintf(stderr, "Erro ao carregar bitmap!\n");
+					exit(1);
+				}
 				
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
@@ -621,6 +682,11 @@ void inicia_mobs()
 				strcat(path, filename);
 
 				mob_5 = al_load_bitmap(path);
+				if(!mob_5)
+				{
+					fprintf(stderr, "Erro ao carregar bitmap!\n");
+					exit(1);
+				}
 				
 				if (monsters[i] -> checa_sprite == 100)
 					monsters[i] -> checa_sprite = 0;
@@ -768,6 +834,11 @@ void draw_hero()
 			strcat(path, DEATH_LEFT);
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
+		if(!stand)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		
 		if (checa_morte >= 6)
@@ -810,6 +881,11 @@ void draw_hero()
 
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
+		if(!stand)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
@@ -828,6 +904,11 @@ void draw_hero()
 
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
+		if(!stand)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
@@ -849,6 +930,11 @@ void draw_hero()
 				strcat(path, HERO_IMAGE_LEFT);
 			strcat(path, filename);
 			stand = al_load_bitmap(path);
+			if(!stand)
+			{
+				fprintf(stderr, "Erro ao carregar bitmap!\n");
+				exit(1);
+			}
 
 			
 			if (num_sprite_hero >= 4)
@@ -882,6 +968,11 @@ void draw_hero()
 
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
+		if(!stand)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
@@ -903,6 +994,11 @@ void draw_hero()
 
 		strcat(path, filename);
 		stand = al_load_bitmap(path);
+		if(!stand)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
@@ -1012,7 +1108,10 @@ void UpdateFloor()
 {
 	int out = 1;
 	if (hero_ -> y + hero_ -> rh == FLOOR)
+	{
 		hero_ -> dy = 0 ;
+		jumping = 0;
+	}
 	if (hero_ -> y + hero_ -> rh > GROUND )
 	{	
 		hero_ -> y = GROUND - hero_ -> rh;
@@ -1094,12 +1193,22 @@ void CameraUpdate()
 	else if (stage != 3)
 	{
 		background=al_load_bitmap(BACKGROUND_FILE);
+		if(!background)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 		al_draw_scaled_bitmap(background,0,0,800,500,0,0,800,500,0);
 		al_destroy_bitmap(background);
 	}
 	else{
 		ALLEGRO_BITMAP *bridge_back = NULL;
 		bridge_back = al_load_bitmap(BRIDGE_STAGE);
+		if(!bridge_back)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 		al_draw_scaled_bitmap(bridge_back,0,0,800,500,0,0,800,500,0);
 		al_destroy_bitmap(bridge_back);
 	}	
@@ -1119,17 +1228,7 @@ void stages_()
 		if (stage == -1 )
 		{
 			al_stop_samples();
-			char filename[100] ="song/forest.wav";
-			ipanema = al_load_sample(filename);
-			if (!ipanema) 
-			{
-				fprintf(stderr, "Could not load sample from '%s'!\n", filename);
-				exit(1);
-			}
-			if (!al_play_sample(ipanema, 1.0, 0.5, 1.0, ALLEGRO_PLAYMODE_LOOP, NULL)) {
-			              fprintf(stderr,
-			                 "al_play_sample_data failed, perhaps too many sounds\n");
-			           }
+			play_init();
 		}
 		if (stage != 5)
 		{
@@ -1137,6 +1236,7 @@ void stages_()
 			if(stage !=  3)
 				GROUND = SUPER_GROUND;
 			hero_ -> x = 50;
+			jumping = 0;
 			hero_ -> y = GROUND - hero_ -> rh;
 			hero_ -> dy = 0;
 			hero_ -> dx = 0;
@@ -1174,6 +1274,7 @@ void stages_()
 			if(stage !=  3)
 			GROUND = SUPER_GROUND;
 			hero_ -> x = 750;
+			jumping = 0;
 			hero_ -> y = GROUND - hero_ -> rh;
 			hero_ -> dy = 0;
 			hero_ -> dx = 0;
@@ -1202,9 +1303,8 @@ void hit()
 					if ((pos >=  obstacles[i] -> y - 5 ) && (pos <= obstacles[i] -> y + (obstacles[i] -> rh/3))) 
 					{
 						FLOOR = obstacles[i] -> y;
-						hero_ -> dy = 0;
 						hero_ -> y = obstacles[i] -> y - hero_ -> rh;
-						draw_hero();
+						jumping = 0;
 					}
 				}
 				else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
@@ -1265,11 +1365,6 @@ void hit()
 								PONTUACAO+=50;
 						}
 						else{
-							if (monsters[i] -> vai)
-								hero_ -> x += monsters[i] -> rw + hero_ -> w;
-							else
-								hero_ -> x -= monsters[i] -> rw + hero_ -> w;
-
 							hito  = al_load_sample("song/hit.wav");
 							if (!hito ) 
 							{
@@ -1330,16 +1425,24 @@ void desalocador()
 /*Funções dos estados do */
 void state_serve(ALLEGRO_EVENT *evento)
 {	
+
 }
-
-
-//Estado inicial que procura inicializar recursos do game
-void state_init(ALLEGRO_FONT* font)
+void repair()
 {
-	//Puxa a música e inicia 
+	stage = 0;
+	hero_ -> y = GROUND - hero_ -> rh;
+	hero_ -> x = 100;
+	estado = JOGANDO;
+	hero_ -> live = 1;
 	morto = 0;
 	al_stop_samples();
+	play_init();
 	OVO = 0;
+	stage = 0;
+}
+
+void play_init()
+{
 	char filename[100] ="song/forest.wav";
 	background_sound = al_load_sample(filename);
 	if (!background_sound) 
@@ -1351,6 +1454,15 @@ void state_init(ALLEGRO_FONT* font)
 	              fprintf(stderr,
 	                 "al_play_sample_data failed, perhaps too many sounds\n");
 	           }
+}
+//Estado inicial que procura inicializar recursos do game
+void state_init(ALLEGRO_FONT* font)
+{
+	//Puxa a música e inicia 
+	morto = 0;
+	al_stop_samples();
+	OVO = 0;
+	play_init();
 	stage = 0;
 	PONTUACAO = 0;
 	if (!playing)
@@ -1417,7 +1529,17 @@ void state_play(ALLEGRO_FONT* font)
 		ALLEGRO_BITMAP *board_right = NULL;
 
 		board_left = al_load_bitmap(BOA_LEFT);
+		if(!board_left)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 		board_right = al_load_bitmap(BOA_RIGHT);
+		if(!board_right)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 
 		al_draw_scaled_bitmap(board_left,0,0,70,70,150,GROUND-70,70,70,0);
 		al_draw_scaled_bitmap(board_right,0,0,70,70,650,GROUND-70,70,70,0);
@@ -1433,6 +1555,11 @@ void state_play(ALLEGRO_FONT* font)
 		int rw_house = 214;
 		int rh_house = 154;
 		house = al_load_bitmap(HOUSE);
+		if(!house)
+		{
+			fprintf(stderr, "Erro ao carregar bitmap!\n");
+			exit(1);
+		}
 		al_draw_scaled_bitmap(house,0,0,w_house,h_house,800-(rw_house) + (rw_house/4),GROUND-rh_house,w_house,h_house,0);
 		al_destroy_bitmap(house);
 		if (hero_ -> x >= 800-(rw_house) + (rw_house/4) )
@@ -1445,9 +1572,9 @@ void state_play(ALLEGRO_FONT* font)
 		hit();
 	
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0,text);
-	al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
-	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
-	al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
+	//al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
+	//al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);
+	//al_draw_text(font, al_map_rgb(255, 104, 1), 100,30, 0,chao);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,20, 0,estagio);
 	if (god_mode)
 		al_draw_text(font, al_map_rgb(255, 104, 1), 676,30, 0,"GOD MODE: ON");
@@ -1510,10 +1637,58 @@ void help()
 void venceu()
 {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(score_font, al_map_rgb(255, 255, 255), 300,150, 0,"VOCE COMPLETOU SUA JORNADA!");
-	al_draw_text(score_font, al_map_rgb(255, 255, 255), 250,200, 0,"PRESSIONE ESC PARA SAIR E SALVAR SEU SCORE!");
+	//al_draw_text(score_font, al_map_rgb(255, 255, 255), 300,150, 0,"VOCE COMPLETOU SUA JORNADA!");
+	//al_draw_text(score_font, al_map_rgb(255, 255, 255), 250,200, 0,"PRESSIONE ESC PARA SAIR E SALVAR SEU SCORE!");
+	int x = 0;
 
-	al_flip_display();
+	 ALLEGRO_USTR *name;
+	 name = al_ustr_new("");
+	 ALLEGRO_EVENT_QUEUE *q;
+	 q = al_create_event_queue();
+	 if(!q)
+	 {
+	     printf("couldn't initialize queue\n");
+	     exit(1);
+	 }
+
+	 //Registra os eventos do programa
+	 al_register_event_source(q, al_get_keyboard_event_source());
+
+	 int done = 0;
+	 while(!done)
+	 {
+	   recebe_user(score_font, name);
+	   ALLEGRO_EVENT ev;
+	   al_wait_for_event(q , &ev);
+	   switch(ev.type)
+	   {
+	     case ALLEGRO_EVENT_DISPLAY_CLOSE:
+	       done = 1;
+	       break;  
+	     case ALLEGRO_EVENT_KEY_CHAR:
+	       if (ev.keyboard.unichar >= 33)
+	       {
+	          if (x <= MAX_LEN){
+	             al_ustr_append_chr(name, ev.keyboard.unichar);
+	             x=al_ustr_length(name);
+	          }
+	       }
+	       else if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+	           done = 1;
+	       else if (ev.keyboard.keycode == ALLEGRO_KEY_ENTER)
+	           done = 1;
+	       else if (ev.keyboard.keycode == ALLEGRO_KEY_BACKSPACE)
+	       {
+	           al_ustr_remove_chr(name, x);
+	           x--;
+	       }
+	       break;
+	   }
+	  
+	 }
+	  al_destroy_event_queue(q);
+	  escreve_file_scores();
+	  estado = HIGH_SCORES;
 }
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
@@ -1566,7 +1741,7 @@ void escreve_file_scores()
 		cont_scores = 10;
 	h_score[cont_scores] -> score = us -> score;
 	if (strcmp(us -> nome, "") == 0)
-		strcpy(us -> nome, "undefined");
+		strcpy(us -> nome, "UNKNOWN");
 	
 	strcpy(h_score[cont_scores] -> nome, us -> nome);
 	cont_scores++;

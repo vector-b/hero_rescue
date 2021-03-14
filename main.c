@@ -12,7 +12,6 @@
 #include "allegro5/allegro_ttf.h"
 #define RESERVED_SAMPLES   16
 #define MAX_SAMPLE_DATA    10
-#define MAX_LEN 5
 #define WIDTH 800
 #define HEIGHT 500
 int old_state;
@@ -20,7 +19,7 @@ int main()
 {
   god_mode = 0;
   ler_file_scores();
-
+  int saiu_fim = 0;
   fim = 0;
 	ALLEGRO_TIMER* timer;
 	ALLEGRO_EVENT_QUEUE* queue;
@@ -123,7 +122,6 @@ int main()
 
         al_wait_for_event(queue, &evento);
 
-      
     	if(evento.type == ALLEGRO_EVENT_TIMER)
     	{
           	switch(estado)
@@ -141,15 +139,21 @@ int main()
               case 7:
                 help();break;
               case 8:
-                venceu();break;
+                venceu();
+                break;
+              case 9:
+                repair();
+                break;
           		default: break ;
           	}
+
         }
+        //Mudar de KEY_DOWN para KEY_CHAR pra ver o hero se tornar o flash
         else if(evento.type == ALLEGRO_EVENT_KEY_DOWN)
         {
             if(evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
                 break;
-            else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) &&((estado == SERVINDO) || (estado == HELP)))
+            else if((evento.keyboard.keycode == ALLEGRO_KEY_ENTER) &&(estado == SERVINDO))
             	estado = JOGANDO;
             else if((evento.keyboard.keycode == ALLEGRO_KEY_S) && (estado == SERVINDO))
                estado = HIGH_SCORES;
@@ -194,64 +198,16 @@ int main()
         }
         else if(evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
         	break;
-
     }
    
 
-   int x = 0;
+   
 
-    ALLEGRO_USTR *name;
-    name = al_ustr_new("");
-    ALLEGRO_EVENT_QUEUE *q;
-    q = al_create_event_queue();
-    if(!q)
-    {
-        printf("couldn't initialize queue\n");
-        exit(1);
-    }
-
-    //Registra os eventos do programa
-    al_register_event_source(q, al_get_keyboard_event_source());
-
-    int done = 0;
-    while(!done)
-    {
-      recebe_user(font, name);
-      ALLEGRO_EVENT ev;
-      al_wait_for_event(q , &ev);
-      switch(ev.type)
-      {
-        case ALLEGRO_EVENT_DISPLAY_CLOSE:
-          done = 1;
-          break;  
-        case ALLEGRO_EVENT_KEY_CHAR:
-          if (ev.keyboard.unichar >= 33)
-          {
-             if (x <= MAX_LEN){
-                al_ustr_append_chr(name, ev.keyboard.unichar);
-                x=al_ustr_length(name);
-             }
-          }
-          else if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-              done = 1;
-          else if (ev.keyboard.keycode == ALLEGRO_KEY_ENTER)
-              done = 1;
-          else if (ev.keyboard.keycode == ALLEGRO_KEY_BACKSPACE)
-          {
-              al_ustr_remove_chr(name, x);
-              x--;
-          }
-
-          break;
-      }
-     
-    }
-
-    escreve_file_scores();
+    
     al_destroy_timer(timer);
     al_destroy_display(disp);
     al_destroy_event_queue(queue);
-    al_destroy_event_queue(q);
+
 
 
 	return 0;

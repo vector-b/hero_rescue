@@ -62,8 +62,10 @@
 #define CONSTANTE_G 10
 #define MAX_WIDTH 1600;
 #define NUM_OBS 13
-#define NUM_MON 8 
+#define NUM_MON 10
 #define NUM_STAIRS 1
+#define MAX_LEN 5
+
 
 
 int conta_background = 0;

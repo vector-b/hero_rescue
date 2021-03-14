@@ -8,6 +8,7 @@
 
 #define NUM_OBS 15
 #define NUM_MON 8 
+#define MAX_LEN 5
 //Imagens de Fundo
 #define BACKGROUND_FILE "img/bg002.bmp"
 #define BRIDGE 			"img/bridge.bmp"
