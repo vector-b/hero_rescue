@@ -30,6 +30,12 @@ void inicia_fontes(){
 	    fprintf(stderr, "Não foi possivel carregar a fonte" );
 	   	exit(1);
 	}
+	brazil_font = al_load_ttf_font(FONT_PIX, 48, 0);
+	if (!score_font)
+	{
+	    fprintf(stderr, "Não foi possivel carregar a fonte" );
+	   	exit(1);
+	}
 }
 
 /*Inicia recursos principais*/
@@ -234,7 +240,7 @@ void create_objects()
 	obstacles[9] -> using = 1;
 	obstacles[9] -> w = 66;
 	obstacles[9] -> h = 24;
-	obstacles[9] -> x = 150;
+	obstacles[9] -> x = 80;
 	obstacles[9] -> rw = 66;
 	obstacles[9] -> rh = 24;
 	obstacles[9] -> vai = 1;
@@ -247,7 +253,7 @@ void create_objects()
 	obstacles[10] -> using = 1;
 	obstacles[10] -> w = 250;
 	obstacles[10] -> h = 50;
-	obstacles[10] -> x = 250;
+	obstacles[10] -> x = 150;
 	obstacles[10] -> rw = 175;
 	obstacles[10] -> rh = 35;
 	obstacles[10] -> vai = 1;
@@ -256,6 +262,32 @@ void create_objects()
 	strcat(obstacles[10] -> name_file, "brick_big.png");
 	obstacles[10] -> y = 200;
 	obstacles[10] -> dx,obstacles[10] -> dy = 0;
+
+	obstacles[11] -> using = 1;
+	obstacles[11] -> w = 250;
+	obstacles[11] -> h = 50;
+	obstacles[11] -> x = 500;
+	obstacles[11] -> rw = 175;
+	obstacles[11] -> rh = 35;
+	obstacles[11] -> vai = 1;
+	obstacles[11] -> stage = 4;
+	obstacles[11] -> name_file[0] = '\0';
+	strcat(obstacles[11] -> name_file, "brick_big.png");
+	obstacles[11] -> y = 200;
+	obstacles[11] -> dx,obstacles[11] -> dy = 0;
+
+	obstacles[12] -> using = 1;
+	obstacles[12] -> w = 66;
+	obstacles[12] -> h = 24;
+	obstacles[12] -> x = 680;
+	obstacles[12] -> rw = 66;
+	obstacles[12] -> rh = 24;
+	obstacles[12] -> vai = 1;
+	obstacles[12] -> stage = 4;
+	obstacles[12] -> name_file[0] = '\0';
+	strcat(obstacles[12] -> name_file, "brick_5.png");
+	obstacles[12] -> y = 435 - obstacles[12] -> rh;
+	obstacles[12] -> dx,obstacles[12] -> dy = 0;
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
@@ -620,12 +652,12 @@ void inicia_mobs()
 						hero_ -> x--;
 				}
 			}
-			else if (i == 9)
+			else if ((i == 9) || (i == 12))
 			{
 				//Muda a direção do deslocamento horizontal
 				if (obstacles[i] -> y >= SUPER_GROUND - obstacles[i] -> rh)
 					obstacles[i] -> vai = 0;
-				else if (obstacles[i] -> y  <=  150)
+				else if (obstacles[i] -> y  <=  200)
 					obstacles[i] -> vai = 1;
 
 				//Anda pra direita ou esquerda
@@ -704,10 +736,55 @@ void write_obstacles()
 				}
 	}		
 }
+void morrer()
+{
+	al_stop_samples();
+	death_sound = al_load_sample("song/death_sound.wav");
+					if (!death_sound) 
+					{
+						fprintf(stderr, "Could not load death sound!\n");
+						exit(1);
+					}
+					if (!al_play_sample(death_sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
+					              fprintf(stderr,
+					                 "al_play_sample_data failed, perhaps too many sounds\n");
+					           }
+}
 //Escreve o herói em sua respectiva posição
 void draw_hero()
-{
-	if (jumping)
+{	if (morto)
+	{
+		conta_morto++;
+		if((conta_morto % 6) == 0 )
+			checa_morte++;
+
+		char filename[100] = "";
+		snprintf(filename, 12, "%d.png", checa_morte);
+
+		char path[100] = "";
+		if(last_right)
+			strcat(path, DEATH);
+		else
+			strcat(path, DEATH_LEFT);
+		strcat(path, filename);
+		stand = al_load_bitmap(path);
+
+		
+		if (checa_morte >= 6)
+		{
+			al_rest(1);
+			hero_ -> live = 0;
+			morrer();
+			checa_morte= 0;
+		}
+		if (conta_morto >= 500)
+			conta_morto = 0;
+
+		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
+
+		al_destroy_bitmap(stand);
+	}
+	else if (jumping)
 	{
 		int chosen = 1;
 		if (hero_ -> y  > FLOOR + (hero_ -> dy/4))
@@ -758,31 +835,35 @@ void draw_hero()
 	}
 	else if (hero_ -> dx == 0)
 	{
-		checa_sprite_hero++;
-		if((checa_sprite_hero % 25) == 0 )
-			num_sprite_hero++;
+			checa_sprite_hero++;
+			if((checa_sprite_hero % 25) == 0 )
+				num_sprite_hero++;
 
-		char filename[100] = "";
-		snprintf(filename, 12, "%d.png", num_sprite_hero);
+			char filename[100] = "";
+			snprintf(filename, 12, "%d.png", num_sprite_hero);
 
-		char path[100] = "";
-		if(last_right)
-			strcat(path, HERO_IMAGE);
-		else
-			strcat(path, HERO_IMAGE_LEFT);
-		strcat(path, filename);
-		stand = al_load_bitmap(path);
+			char path[100] = "";
+			if(last_right)
+				strcat(path, HERO_IMAGE);
+			else
+				strcat(path, HERO_IMAGE_LEFT);
+			strcat(path, filename);
+			stand = al_load_bitmap(path);
 
-		
-		if (num_sprite_hero >= 4)
-			num_sprite_hero = 1;
-		if (checa_sprite_hero == 500)
-			checa_sprite_hero = 0;
+			
+			if (num_sprite_hero >= 4)
+				num_sprite_hero = 1;
+			if (checa_sprite_hero == 500)
+				checa_sprite_hero = 0;
+
+
+			
 
 
 		al_draw_scaled_bitmap(stand,0,0,hero_ -> w,hero_ -> h,hero_ -> x,hero_ -> y,hero_ -> rw,hero_ -> rh,0);
 
-		al_destroy_bitmap(stand);
+			al_destroy_bitmap(stand);
+		
 	}
 	else if(hero_ -> dx > 0 )
 	{
@@ -904,20 +985,7 @@ void delta_transform()
 	}
 }
 
-void morrer()
-{
-	al_stop_samples();
-	death_sound = al_load_sample("song/death_sound.wav");
-					if (!death_sound) 
-					{
-						fprintf(stderr, "Could not load death sound!\n");
-						exit(1);
-					}
-					if (!al_play_sample(death_sound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
-					              fprintf(stderr,
-					                 "al_play_sample_data failed, perhaps too many sounds\n");
-					           }
-}
+
 //Simula uma gravidade que puxa o heroi em situações necessárias
 void gravity_check()
 {
@@ -991,7 +1059,7 @@ void CameraUpdate()
 	if (stage == -1)
 	{	//STREET_FOLDER;
 		conta_background++;
-		if ((conta_background % 6) == 0)
+		if ((conta_background % 9) == 0)
 			checa_wp++;
 		if (checa_wp >= 4)
 			checa_wp = 0;
@@ -1013,13 +1081,13 @@ void CameraUpdate()
 			conta_background = 0;
 		al_draw_scaled_bitmap(easter_back,0,0,800,500,0,0,800,500,0);
 		if (checa_wp == 0)
-			al_draw_text(title_font, al_map_rgb(255, 104, 1), 250,180, 0,"COME TO BRAZIL");
+			al_draw_text(brazil_font, al_map_rgb(255, 104, 1), 250,180, 0,"COME TO BRAZIL");
 		else if (checa_wp == 1)
-			al_draw_text(title_font, al_map_rgb(120, 255, 100), 250,180, 0,"COME TO BRAZIL");
+			al_draw_text(brazil_font, al_map_rgb(120, 255, 100), 250,180, 0,"COME TO BRAZIL");
 		else if (checa_wp == 2)
-			al_draw_text(title_font, al_map_rgb(255, 0, 100), 250,180, 0,"COME TO BRAZIL");
+			al_draw_text(brazil_font, al_map_rgb(255, 0, 100), 250,180, 0,"COME TO BRAZIL");
 		else if (checa_wp == 3)
-			al_draw_text(title_font, al_map_rgb(100, 10, 200), 250,180, 0,"COME TO BRAZIL");
+			al_draw_text(brazil_font, al_map_rgb(100, 10, 200), 250,180, 0,"COME TO BRAZIL");
 
 		al_destroy_bitmap(easter_back);
 	}
@@ -1171,6 +1239,7 @@ void hit()
 				{
 						hero_ -> dy -= CONSTANTE_Y;
 						monsters[i] -> life--;
+
 						if (monsters[i] -> life == 0 )
 						{
 							monsters[i] -> live = 0;
@@ -1200,6 +1269,17 @@ void hit()
 								hero_ -> x += monsters[i] -> rw + hero_ -> w;
 							else
 								hero_ -> x -= monsters[i] -> rw + hero_ -> w;
+
+							hito  = al_load_sample("song/hit.wav");
+							if (!hito ) 
+							{
+								fprintf(stderr, "Could not load jump sound!\n");
+								exit(1);
+							}
+							if (!al_play_sample(hito , 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
+							              fprintf(stderr,
+							                 "error in hit file\n");
+							           }
 							
 						}
 						
@@ -1215,8 +1295,20 @@ void hit()
 					//printf("%d %d\n",hero_ -> y + hero_-> rh, monsters[i] -> y  );
 					if (!god_mode)
 					{
-						hero_ -> live = 0;
-						morrer();
+						death_ringt = al_load_sample("song/lego.wav");
+										if (!death_ringt) 
+										{
+											fprintf(stderr, "Could not load death sound!\n");
+											exit(1);
+										}
+										if (!al_play_sample(death_ringt, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0)) {
+										              fprintf(stderr,
+										                 "error playing death sound\n");
+										           }
+
+						hero_ -> dx = 0; 
+						morto = 1;
+						
 					}
 					
 				}
@@ -1239,10 +1331,13 @@ void desalocador()
 void state_serve(ALLEGRO_EVENT *evento)
 {	
 }
+
+
 //Estado inicial que procura inicializar recursos do game
 void state_init(ALLEGRO_FONT* font)
 {
 	//Puxa a música e inicia 
+	morto = 0;
 	al_stop_samples();
 	OVO = 0;
 	char filename[100] ="song/forest.wav";
@@ -1293,10 +1388,14 @@ void state_play(ALLEGRO_FONT* font)
 	UpdateFloor();
     //Imprime obstaculos
     write_obstacles();
-	//Checagem da gravidade
-	gravity_check();
-	//Altera o variação de velocidade do personagem
-	move_side();
+    if (!morto)
+    {
+    	//Checagem da gravidade
+    	gravity_check();
+    	//Altera o variação de velocidade do personagem
+    	move_side();
+    }
+	
 	//printf("%d e %d\n",hero_ -> y, hero_ ->dy );
 	char posY[50];
 	snprintf(posY,25,"Y: %d / DY: %d",hero_ -> y, hero_ -> dy);
@@ -1339,14 +1438,12 @@ void state_play(ALLEGRO_FONT* font)
 		if (hero_ -> x >= 800-(rw_house) + (rw_house/4) )
 			estado = VENCEU;
 	}
-	else if (stage == -1)
-	{
-		
-	}
     //Desenha o personagem controlavel
 	draw_hero();
 	//Checa Hit
-	hit();
+	if (!morto)
+		hit();
+	
 	al_draw_text(font, al_map_rgb(255, 104, 1), 700,10, 0,text);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,10, 0,posY);
 	al_draw_text(font, al_map_rgb(255, 104, 1), 100,20, 0,posX);

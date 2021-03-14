@@ -49,6 +49,8 @@
 #define JUMP			"img/hero/jump/"
 #define FALL_LEFT		"img/hero_left/fall/"
 #define FALL			"img/hero/fall/"
+#define DEATH   		"img/hero/death/"
+#define DEATH_LEFT		"img/hero_left/death/"
 
 #define HERO_IMAGE		"img/hero/"
 #define HERO_IMAGE_LEFT	"img/hero_left/"
@@ -59,7 +61,7 @@
 #define CONSTANTE_Y 160
 #define CONSTANTE_G 10
 #define MAX_WIDTH 1600;
-#define NUM_OBS 11
+#define NUM_OBS 13
 #define NUM_MON 8 
 #define NUM_STAIRS 1
 
@@ -82,6 +84,9 @@ int old_dy;
 int last_right = 1;
 int stage = 3;
 int cont_scores = 0;
+int morto = 0;
+int conta_morto =0;
+int checa_morte =0;
 
 
 int FLOOR;
@@ -111,10 +116,14 @@ ALLEGRO_SAMPLE *ipanema			= NULL;
 ALLEGRO_SAMPLE *som_pulo 		= NULL;
 ALLEGRO_SAMPLE *kill_sound		= NULL;
 ALLEGRO_SAMPLE *death_sound		= NULL;
+ALLEGRO_SAMPLE *death_ringt 	= NULL;
+ALLEGRO_SAMPLE *hito  			= NULL;
 
 ALLEGRO_FONT* title_font		= NULL;
 ALLEGRO_FONT* score_font		= NULL;
 ALLEGRO_FONT* name_font			= NULL;
+ALLEGRO_FONT* brazil_font		= NULL;
+
 
 hero 	*hero_     				= NULL;
 obs 	**obstacles 			= NULL;
