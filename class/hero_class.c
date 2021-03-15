@@ -1158,7 +1158,7 @@ void CameraUpdate()
 		easter_back = al_load_bitmap(filename);
 		if (!easter_back)
 		{
-			fprintf(stderr, "DEU ERRO POR");
+			fprintf(stderr, "Erro no background!");
 			exit(1);
 		}
 		if (conta_background > 500)
@@ -1727,7 +1727,7 @@ void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
     strcpy(us -> nome, nome);
     us -> score = PONTUACAO;
 
-    char text[100] = "Digite seu nome: ";
+    char text[100] = "Digite seu NICK: ";
 	al_clear_to_color(al_map_rgb(0, 35, 8));
 	al_draw_text(title_font, al_map_rgb(255, 104, 1), 250,180, 0,text);
 	al_draw_text(name_font, al_map_rgb(255, 104, 1), 330,250, 0,nome);
