@@ -1669,6 +1669,7 @@ void state_close()
     }
 	al_draw_scaled_bitmap(end_game,0,0,800,500,0,0,800,500,0);
 	al_destroy_bitmap(end_game);
+	//Imprime a tela de fim de jogo e a destroi em seguida
 	al_flip_display();
 }
 //Exibe o placar de high_scores

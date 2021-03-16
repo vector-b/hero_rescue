@@ -60,6 +60,7 @@ struct user_score
 	char nome[100];
 	int score;
 };
+//Definição das estruturas utlizadas 
 typedef struct monster monster;
 typedef struct obs obs;
 typedef struct hero hero;

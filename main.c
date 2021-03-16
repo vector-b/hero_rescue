@@ -124,7 +124,7 @@ int main()
        //Quando timer for ativado o evento do jogo funciona
     	if(evento.type == ALLEGRO_EVENT_TIMER)
     	{
-        //Swithc ente estados
+        //Switch ente estados
           	switch(estado)
           	{
           		case INICIO:
@@ -180,7 +180,7 @@ int main()
              
             }
             else if ((evento.keyboard.keycode == ALLEGRO_KEY_G))
-            {
+            { //Se pressionar G ativa o GOD_MODE
               if (god_mode)
                 god_mode = 0;
               else
@@ -188,6 +188,7 @@ int main()
             }
             else if(estado == JOGANDO)
             {
+              //Usa as teclas de movimentação e passa pra uma variavel
               if(evento.keyboard.keycode == ALLEGRO_KEY_LEFT)
                 dir = ESQUERDA;
               else if (evento.keyboard.keycode == ALLEGRO_KEY_UP)
@@ -199,6 +200,7 @@ int main()
             }
             else if (estado == FIMJOGO)
             {
+              //Reinicia a partida caso tenha perdido
               if(evento.keyboard.keycode == ALLEGRO_KEY_R)
                 estado = INICIO;
             }
