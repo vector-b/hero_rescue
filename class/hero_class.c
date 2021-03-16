@@ -9,7 +9,7 @@
 #include "allegro5/allegro_primitives.h"
 #include "allegro5/allegro_ttf.h"
 
-
+//Função pra iniciar as fontes, carregando-as da pasta e emitindo erros quando necessário
 void inicia_fontes(){
 
 	title_font = al_load_ttf_font(FONT_PIX, 40, 0);
@@ -43,6 +43,7 @@ void inicia_fontes(){
 //Inicia Heroi, com seus dados iniciais 
 void make_hero()
 {
+	//Alocando o personagem principal e iniciando  suas variaveis
 	hero_ = malloc(sizeof(hero));
 	if (!hero_)
 	{
@@ -88,7 +89,8 @@ void make_background()
 
 //Aloca objetos e monstros
 void alocador()
-{
+{	
+	//Aloca os obstaculos e emite erro quando necessario
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
 		obstacles[i] = malloc(15000*sizeof(obstacles));
@@ -97,7 +99,7 @@ void alocador()
 		fprintf(stderr, "Não foi possível alocar obstaculos\n" );
 		exit(1);
 	}
-
+	//Aloca os monstros e emite erro quando necessario
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
 		monsters[i] = malloc(3000*sizeof(monsters[i]));
@@ -111,6 +113,7 @@ void alocador()
 void create_objects()
 {
 	//Cria manualmente todos os objetos do jogo, tais como caixas ou plataformas
+	//Obstaculos de 1 - NUM_OBS INICIADOS MANUALMENTE
 	obstacles[0] -> using = 1;
 	obstacles[0] -> w = 145;
 	obstacles[0] -> h = 66;
@@ -291,6 +294,7 @@ void create_objects()
 void cria_monstros_estruturas()
 {
 	//Cria manualmente os monstros do jogo
+	//Inicia monstros de 1 - NUM_MON
 	monsters[0] -> using = 1;
 	monsters[0] -> type = 1;
 	monsters[0] -> live = 1;
@@ -520,6 +524,7 @@ int checa_hero(int i)
 //Função que gerencia os monstros, apenas ativada nos estágios dos respectivos monstros
 void inicia_mobs()
 {
+	//INICIA OS MOBS E MUDA SUAS POSIÇÕES DEPENDENDO DO TIPO 
 	for (int i = 0; i < NUM_MON; i++)
 	{
 		//Para cada tipo de monstro realiza uma transição diferente entre as sprites
@@ -765,10 +770,11 @@ void write_obstacles()
 	//Imprime os obstaculos existentes
 	for (int i = 0; i < NUM_OBS; i++)
 			if ((stage == obstacles[i] -> stage) && (obstacles[i] -> using == 1))
-			{	
+			{	//Mescla o path do obstaculos com o path predefinido da pasta
 				char path[100] = "";
 				strcat(path, OBJ_FOLDER);
 				strcat(path,obstacles[i] -> name_file);
+				//Aloca um obstaculo temporario para ser printado
 				ALLEGRO_BITMAP *obj = NULL;
 				obj = al_load_bitmap(path);
 				if (!obj)
@@ -878,6 +884,7 @@ void draw_hero()
 	}
 	else if (jumping)
 	{
+		 //Se estiver pulando usa animação propria do pulo 
 		//Animação de pulo
 		int chosen = 1;
 		if (hero_ -> y  > FLOOR + (hero_ -> dy/4))
@@ -939,11 +946,11 @@ void draw_hero()
 	}
 	else if (hero_ -> dx == 0)
 	{
-		//Animação parado
+			//Animação parado
 			checa_sprite_hero++;
 			if((checa_sprite_hero % 25) == 0 )
 				num_sprite_hero++;
-
+			//Animação do personagem parado e se mexendo 
 			char filename[100] = "";
 			snprintf(filename, 12, "%d.png", num_sprite_hero);
 
@@ -1205,6 +1212,7 @@ void CameraUpdate()
 		}
 		if (conta_background > 500)
 			conta_background = 0;
+		//Imprime o mesmo texto em cores variadas
 		al_draw_scaled_bitmap(easter_back,0,0,800,500,0,0,800,500,0);
 		if (checa_wp == 0)
 			al_draw_text(brazil_font, al_map_rgb(255, 104, 1), 250,180, 0,"COME TO BRAZIL");
