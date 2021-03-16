@@ -44,6 +44,11 @@ void inicia_fontes(){
 void make_hero()
 {
 	hero_ = malloc(sizeof(hero));
+	if (!hero_)
+	{
+		fprintf(stderr, "Não foi possível alocar\n" );
+		exit(1);
+	}
 	hero_ -> live = 1;
 	hero_ -> dx = 0;
 	hero_ -> dy = 0;   
@@ -87,10 +92,20 @@ void alocador()
 	obstacles = malloc(NUM_OBS* sizeof(obstacles));
 	for (int i = 0; i < NUM_OBS; i++)
 		obstacles[i] = malloc(15000*sizeof(obstacles));
+	if (!obstacles)
+	{
+		fprintf(stderr, "Não foi possível alocar obstaculos\n" );
+		exit(1);
+	}
 
 	monsters = malloc(NUM_MON*sizeof(monsters));
 	for (int i = 0; i < NUM_MON; i++)
 		monsters[i] = malloc(3000*sizeof(monsters[i]));
+	if (!monsters)
+	{
+		fprintf(stderr, "Não foi possível alocar monstros\n" );
+		exit(1);
+	}
 }
 //Cria manualmente os obstaculos do jogo (estruturas físicas)
 void create_objects()
@@ -106,7 +121,8 @@ void create_objects()
 	obstacles[0] -> name_file[0] = '\0';
 	strcat(obstacles[0] -> name_file, "floor_br.bmp");
 	obstacles[0] -> y = 435;
-	obstacles[0] -> dx,obstacles[0] -> dy = 0;
+	obstacles[0] -> dx = 0;
+	obstacles[0] -> dy = 0;
 
 	obstacles[1] -> using = 1;
 	obstacles[1] -> w = 106;
@@ -118,7 +134,8 @@ void create_objects()
 	obstacles[1] -> name_file[0] = '\0';
 	strcat(obstacles[1] -> name_file, "crate.bmp");
 	obstacles[1] -> y = SUPER_GROUND - obstacles[1] -> rh;
-	obstacles[1] -> dx,obstacles[1] -> dy = 0;
+	obstacles[1] -> dx = 0;
+	obstacles[1] -> dy = 0;
 
 	obstacles[2] -> using = 1;
 	obstacles[2] -> w = 106;
@@ -130,7 +147,8 @@ void create_objects()
 	obstacles[2] -> name_file[0] = '\0';
 	strcat(obstacles[2] -> name_file, "crate.bmp");
 	obstacles[2] -> y = SUPER_GROUND - obstacles[2] -> rh;
-	obstacles[2] -> dx,obstacles[2] -> dy = 0;
+	obstacles[2] -> dx = 0;
+	obstacles[2] -> dy = 0;
 
 
 	obstacles[3] -> using = 1;
@@ -143,7 +161,8 @@ void create_objects()
 	obstacles[3] -> name_file[0] = '\0';
 	strcat(obstacles[3] -> name_file, "crate.bmp");
 	obstacles[3] -> y = SUPER_GROUND - obstacles[3] -> rh;
-	obstacles[3] -> dx,obstacles[3] -> dy = 0;
+	obstacles[3] -> dx = 0;
+	obstacles[3] -> dy = 0;
 
 	obstacles[4] -> using = 1;
 	obstacles[4] -> w = 74;
@@ -155,7 +174,8 @@ void create_objects()
 	obstacles[4] -> name_file[0] = '\0';
 	strcat(obstacles[4] -> name_file, "brick_4.bmp");
 	obstacles[4] -> y = SUPER_GROUND - obstacles[4] -> rh;
-	obstacles[4] -> dx,obstacles[4] -> dy = 0;
+	obstacles[4] -> dx=0;
+	obstacles[4] -> dy = 0;
 
 	obstacles[5] -> using = 1;
 	obstacles[5] -> w = 74;
@@ -167,7 +187,8 @@ void create_objects()
 	obstacles[5] -> name_file[0] = '\0';
 	strcat(obstacles[5] -> name_file, "brick_4.bmp");
 	obstacles[5] -> y = SUPER_GROUND - obstacles[5] -> rh;
-	obstacles[5] -> dx,obstacles[5] -> dy = 0;
+	obstacles[5] -> dx = 0;
+	obstacles[5] -> dy = 0;
 
 	obstacles[6] -> using = 1;
 	obstacles[6] -> w = 74;
@@ -179,7 +200,8 @@ void create_objects()
 	obstacles[6] -> name_file[0] = '\0';
 	strcat(obstacles[6] -> name_file, "brick_4.bmp");
 	obstacles[6] -> y = SUPER_GROUND - obstacles[6] -> rh;
-	obstacles[6] -> dx,obstacles[6] -> dy = 0;
+	obstacles[6] -> dx = 0;
+	obstacles[6] -> dy = 0;
 
 	obstacles[7] -> using = 1;
 	obstacles[7] -> w = 145;
@@ -191,7 +213,8 @@ void create_objects()
 	obstacles[7] -> name_file[0] = '\0';
 	strcat(obstacles[7] -> name_file, "floor_br.bmp");
 	obstacles[7] -> y = 435;
-	obstacles[7] -> dx,obstacles[7] -> dy = 0;
+	obstacles[7] -> dx = 0;
+	obstacles[7] -> dy = 0;
 
 
 	obstacles[8] -> using = 1;
@@ -205,7 +228,8 @@ void create_objects()
 	obstacles[8] -> name_file[0] = '\0';
 	strcat(obstacles[8] -> name_file, "brick_5.png");
 	obstacles[8] -> y = 435;
-	obstacles[8] -> dx,obstacles[8] -> dy = 0;
+	obstacles[8] -> dx = 0;
+	obstacles[8] -> dy = 0;
 
 	obstacles[9] -> using = 1;
 	obstacles[9] -> w = 66;
@@ -218,7 +242,8 @@ void create_objects()
 	obstacles[9] -> name_file[0] = '\0';
 	strcat(obstacles[9] -> name_file, "brick_5.png");
 	obstacles[9] -> y = 435 - obstacles[9] -> rh;
-	obstacles[9] -> dx,obstacles[9] -> dy = 0;
+	obstacles[9] -> dx = 0;
+	obstacles[9] -> dy = 0;
 
 	obstacles[10] -> using = 1;
 	obstacles[10] -> w = 250;
@@ -231,7 +256,8 @@ void create_objects()
 	obstacles[10] -> name_file[0] = '\0';
 	strcat(obstacles[10] -> name_file, "brick_big.png");
 	obstacles[10] -> y = 200;
-	obstacles[10] -> dx,obstacles[10] -> dy = 0;
+	obstacles[10] -> dx = 0; 
+	obstacles[10] -> dy = 0;
 
 	obstacles[11] -> using = 1;
 	obstacles[11] -> w = 250;
@@ -244,7 +270,8 @@ void create_objects()
 	obstacles[11] -> name_file[0] = '\0';
 	strcat(obstacles[11] -> name_file, "brick_big.png");
 	obstacles[11] -> y = 200;
-	obstacles[11] -> dx,obstacles[11] -> dy = 0;
+	obstacles[11] -> dx = 0;
+	obstacles[11] -> dy = 0;
 
 	obstacles[12] -> using = 1;
 	obstacles[12] -> w = 66;
@@ -257,7 +284,8 @@ void create_objects()
 	obstacles[12] -> name_file[0] = '\0';
 	strcat(obstacles[12] -> name_file, "brick_5.png");
 	obstacles[12] -> y = 435 - obstacles[12] -> rh;
-	obstacles[12] -> dx,obstacles[12] -> dy = 0;
+	obstacles[12] -> dx = 0;
+	obstacles[12] -> dy = 0;
 }
 //Cria os monstros do jogo
 void cria_monstros_estruturas()
@@ -273,7 +301,8 @@ void cria_monstros_estruturas()
 	monsters[0] -> rw = 50;
 	monsters[0] -> rh = 50;
 	monsters[0] -> y = SUPER_GROUND - monsters[0] -> rh;
-	monsters[0] -> dx,monsters[0] -> dy = 0;
+	monsters[0] -> dx = 0;
+	monsters[0] -> dy = 0;
 	monsters[0] -> vai = 0;
 	monsters[0] -> x_ini = 300;
 	monsters[0] -> x_dest = 450;
@@ -291,7 +320,8 @@ void cria_monstros_estruturas()
 	monsters[1] -> rw = 60;
 	monsters[1] -> rh = 51;
 	monsters[1] -> y = 200;
-	monsters[1] -> dx,monsters[1] -> dy = 0;
+	monsters[1] -> dx = 0;
+	monsters[1] -> dy = 0;
 	monsters[1] -> vai = 0;
 	monsters[1] -> sobe = 0;
 	monsters[1] -> x_ini = 0;
@@ -312,7 +342,8 @@ void cria_monstros_estruturas()
 	monsters[2] -> rw = 28;
 	monsters[2] -> rh = 22;
 	monsters[2] -> y = 200;
-	monsters[2] -> dx,monsters[2] -> dy = 0;
+	monsters[2] -> dx = 0;
+	monsters[2] -> dy = 0;
 	monsters[2] -> vai = 0;
 	monsters[2] -> sobe = 0;
 	monsters[2] -> x_ini = 0;
@@ -333,7 +364,8 @@ void cria_monstros_estruturas()
 	monsters[3] -> rw = 28;
 	monsters[3] -> rh = 22;
 	monsters[3] -> y = 100;
-	monsters[3] -> dx,monsters[3] -> dy = 0;
+	monsters[3] -> dx =0; 
+	monsters[3] -> dy = 0;
 	monsters[3] -> vai = 0;
 	monsters[3] -> sobe = 0;
 	monsters[3] -> x_ini = 0;
@@ -354,7 +386,8 @@ void cria_monstros_estruturas()
 	monsters[4] -> rw = 28;
 	monsters[4] -> rh = 22;
 	monsters[4] -> y = 300;
-	monsters[4] -> dx,monsters[4] -> dy = 0;
+	monsters[4] -> dx = 0;
+	monsters[4] -> dy = 0;
 	monsters[4] -> vai = 0;
 	monsters[4] -> sobe = 0;
 	monsters[4] -> x_ini = 500;
@@ -375,7 +408,8 @@ void cria_monstros_estruturas()
 	monsters[5] -> rw = 70;
 	monsters[5] -> rh = 103;
 	monsters[5] -> y = 200;
-	monsters[5] -> dx,monsters[4] -> dy = 0;
+	monsters[5] -> dx = 0;
+	monsters[4] -> dy = 0;
 	monsters[5] -> vai = 0;
 	monsters[5] -> sobe = 0;
 	monsters[5] -> x_ini = 100;
@@ -396,7 +430,8 @@ void cria_monstros_estruturas()
 	monsters[6] -> rw = 108;
 	monsters[6] -> rh = 156;
 	monsters[6] -> y = SUPER_GROUND - monsters[6] -> rh;
-	monsters[6] -> dx,monsters[6] -> dy = 0;
+	monsters[6] -> dx = 0;
+	monsters[6] -> dy = 0;
 	monsters[6] -> vai = 0;
 	monsters[6] -> sobe = 0;
 	monsters[6] -> x_ini = 250;
@@ -417,7 +452,8 @@ void cria_monstros_estruturas()
 	monsters[7] -> rw = 70;
 	monsters[7] -> rh = 103;
 	monsters[7] -> y = 300;
-	monsters[7] -> dx,monsters[7] -> dy = 0;
+	monsters[7] -> dx = 0;
+	monsters[7] -> dy = 0;
 	monsters[7] -> vai = 0;
 	monsters[7] -> sobe = 0;
 	monsters[7] -> x_ini = 100;
@@ -438,7 +474,8 @@ void cria_monstros_estruturas()
 	monsters[8] -> rw = 28;
 	monsters[8] -> rh = 22;
 	monsters[8] -> y = 370;
-	monsters[8] -> dx,monsters[8] -> dy = 0;
+	monsters[8] -> dx = 0;
+	monsters[8] -> dy = 0;
 	monsters[8] -> vai = 0;
 	monsters[8] -> sobe = 0;
 	monsters[8] -> x_ini = 500;
@@ -459,7 +496,8 @@ void cria_monstros_estruturas()
 	monsters[9] -> rw = 28;
 	monsters[9] -> rh = 22;
 	monsters[9] -> y = 370;
-	monsters[9] -> dx,monsters[9] -> dy = 0;
+	monsters[9] -> dx = 0;
+	monsters[9] -> dy = 0;
 	monsters[9] -> vai = 0;
 	monsters[9] -> sobe = 0;
 	monsters[9] -> x_ini = 100;
@@ -669,7 +707,8 @@ void inicia_mobs()
 	for (int i = 0; i < NUM_OBS; i++)
 	{
 		//Movimenta os obstaculos que se mexem
-		if (stage == obstacles[i] -> stage)
+		if ((stage) == obstacles[i] -> stage)
+		{
 			if (i == 8)
 			{
 				//Muda a direção do deslocamento horizontal
@@ -714,7 +753,7 @@ void inicia_mobs()
 						hero_ -> y--;
 				}
 			}
-		
+		}
 	}
 }
 
@@ -746,7 +785,9 @@ void write_obstacles()
 	{
 		//Para cada TIPO de monstor, imprime sua sprite
 		if ((stage == monsters[i] -> stage) && (monsters[i] -> using))
+
 			if (monsters[i] -> live == 1)
+			{
 				if (monsters[i] -> type == 1)
 				{
 					al_draw_scaled_bitmap(mob,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
@@ -775,6 +816,7 @@ void write_obstacles()
 					al_draw_scaled_bitmap(mob_5,0,0,monsters[i] -> w,monsters[i] -> h,monsters[i] -> x,monsters[i] -> y,monsters[i] -> rw,monsters[i] -> rh,0);
 					//al_destroy_bitmap(mob_3);
 				}
+			}
 	}		
 }
 //Realiza a morte do personagem
@@ -782,7 +824,7 @@ void morrer()
 {
 	//Sonzinho pós-morte
 	al_stop_samples();
-	death_sound = al_load_sample("song/death_sound.wav");
+	death_sound = al_load_sample("resources/song/death_sound.wav");
 					if (!death_sound) 
 					{
 						fprintf(stderr, "Could not load death sound!\n");
@@ -1005,7 +1047,7 @@ void move_side()
 			if (!jumping)
 			{
 				hero_ -> dy -= CONSTANTE_Y;
-				som_pulo = al_load_sample("song/jump.wav");
+				som_pulo = al_load_sample("resources/song/jump.wav");
 				if (!som_pulo) 
 				{
 					fprintf(stderr, "Could not load jump sound!\n");
@@ -1075,8 +1117,6 @@ void gravity_check()
 	//Corrigi deslocamento vertical 
 	if (hero_ -> dy > 0)
 		hero_ -> dy =0;
-	int distancia_floor_hero = 0;
-	distancia_floor_hero = FLOOR - hero_ -> rh;
 	//Usa a constante G caso o usuario esteja fora do chão e pulando 
 	if ((hero_ -> y  + hero_ -> rh < FLOOR) && jumping == 0)
 	{
@@ -1202,7 +1242,7 @@ void CameraUpdate()
 void play_init()
 {
 	//Toca a musica da floresta 
-	char filename[100] ="song/forest.wav";
+	char filename[100] ="resources/song/forest.wav";
 	background_sound = al_load_sample(filename);
 	if (!background_sound) 
 	{
@@ -1261,7 +1301,7 @@ void stages_()
 			if (stage == 0)
 			{
 				al_stop_samples();
-				char filename[100] ="song/ipanema.wav";
+				char filename[100] ="resources/song/ipanema.wav";
 				ipanema = al_load_sample(filename);
 				if (!ipanema) 
 				{
@@ -1348,7 +1388,7 @@ void hit()
 						if (monsters[i] -> life == 0 )
 						{
 							monsters[i] -> live = 0;
-							kill_sound = al_load_sample("song/kill.wav");
+							kill_sound = al_load_sample("resources/song/kill.wav");
 							if (!kill_sound) 
 							{
 								fprintf(stderr, "Could not load kill sound!\n");
@@ -1372,7 +1412,7 @@ void hit()
 						}
 						else{
 							//Caso atinja um monstro mas não o mate
-							hito  = al_load_sample("song/hit.wav");
+							hito  = al_load_sample("resources/song/hit.wav");
 							if (!hito ) 
 							{
 								fprintf(stderr, "Could not load jump sound!\n");
@@ -1397,7 +1437,7 @@ void hit()
 					//printf("%d %d\n",hero_ -> y + hero_-> rh, monsters[i] -> y  );
 					if (!god_mode)
 					{
-						death_ringt = al_load_sample("song/lego.wav");
+						death_ringt = al_load_sample("resources/song/lego.wav");
 										if (!death_ringt) 
 										{
 											fprintf(stderr, "Could not load death sound!\n");
@@ -1740,9 +1780,19 @@ void ler_file_scores()
 		for (int i = 0; i < 11; i++){
 			h_score[i] = malloc(1000*sizeof(h_score));
 		}
+	if (!h_score)
+	{
+		fprintf(stderr, "Não foi possível alocar\n" );
+		exit(1);
+	}	
 	char c;
 	FILE *file_score;
 	file_score = fopen("scores","a+");
+	if (!file_score)
+	{
+		fprintf(stderr, "Erro na leitura do arquivo\n" );
+		exit(1);
+	}
 	while ((c = fgetc(file_score)) != EOF) 
 	{
 	  fseek(file_score,-1,SEEK_CUR);

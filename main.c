@@ -19,7 +19,6 @@ int main()
 {
   god_mode = 0;
   ler_file_scores();
-  int saiu_fim = 0;
   fim = 0;
 	ALLEGRO_TIMER* timer;
 	ALLEGRO_EVENT_QUEUE* queue;
