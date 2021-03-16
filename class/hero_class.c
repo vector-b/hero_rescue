@@ -1149,15 +1149,15 @@ void UpdateFloor()
 				if (((hero_ -> y + hero_ -> rh) <= obstacles[i] -> y ))
 					{
 						out = 1;
-						//Em cima da caixa
+						//Nesse condição o usuário esta em cima do obejto
 						if ((hero_ -> y + hero_ -> rh <=  obstacles[i] -> y ) && (hero_ -> y + hero_ -> rh > obstacles[i] -> y - 5) ) 
 						{
+							//Caso esteja em cima mas próximo de estar em pé sobre o objeto, retorna 0
 							out = 0;
 						}
 					}
 					else if((hero_ -> y > obstacles[i] -> y + obstacles[i] -> rh))
 					{
-						//printf("xd\n");
 						//Em baixo da caixa
 						out = 1; 
 					}
@@ -1168,6 +1168,7 @@ void UpdateFloor()
 	}
 	if (out)
 	{
+		//Se estiver fora de algum objeto, o chão torna-se o chão abosluto da fase 
 		FLOOR = GROUND;
 		
 	}
@@ -1181,6 +1182,7 @@ void CameraUpdate()
 
 	if (stage == -1)
 	{	//STREET_FOLDER;
+		//Essa parte é segredo
 		conta_background++;
 		if ((conta_background % 9) == 0)
 			checa_wp++;
@@ -1217,6 +1219,7 @@ void CameraUpdate()
 	}
 	else if (stage != 3)
 	{
+		//Carrega o bitmap do background
 		background=al_load_bitmap(BACKGROUND_FILE);
 		if(!background)
 		{
@@ -1227,6 +1230,7 @@ void CameraUpdate()
 		al_destroy_bitmap(background);
 	}
 	else{
+		//Carrega o mapa do estagio 3
 		ALLEGRO_BITMAP *bridge_back = NULL;
 		bridge_back = al_load_bitmap(BRIDGE_STAGE);
 		if(!bridge_back)
@@ -1470,6 +1474,8 @@ void desalocador()
 	for (int i = 0; i < NUM_OBS; i++)
 		free(obstacles[i]);
 	free(obstacles);
+
+	al_destroy_sample(background_sound);
 }
 /*Funções dos estados*/
 
@@ -1611,11 +1617,13 @@ void state_play(ALLEGRO_FONT* font)
 	}
 	else if (stage == 5)
 	{
+		//Caso o estagio seja o ultimo, ativa a função do ovo de pascoa
 		OVO = 1;
 		int w_house = 214;
 		int h_house = 154;
 		int rw_house = 214;
 		int rh_house = 154;
+		//Carrega o bitmap da Casa do estagio 5
 		house = al_load_bitmap(HOUSE);
 		if(!house)
 		{
@@ -1666,8 +1674,8 @@ void state_close()
 //Exibe o placar de high_scores
 void show_scores()
 {
+	//Exibe a tabela high-scores
 	al_clear_to_color(al_map_rgb(0, 35, 8));
-
 	al_draw_text(title_font, al_map_rgb(242, 238, 113), 250,100, 0,"HIGH - SCORES");
 	
 	int offset = 10;
@@ -1762,6 +1770,7 @@ void venceu()
 //Atribui as letras que o player digita no nome dele 
 void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 {
+	//Recebe a digitação do usuario e aramazena num char array
 	char nome[100];
 	us = malloc(100*sizeof(h_score));
     strcpy(nome, al_cstr(name));
@@ -1777,6 +1786,7 @@ void recebe_user(ALLEGRO_FONT* font, ALLEGRO_USTR *name)
 //Le a tabela de scores
 void ler_file_scores()
 {
+	//Faz a leitura do arquivo de score  e armazena numa matriz
 	h_score = malloc(11*sizeof(h_score));
 		for (int i = 0; i < 11; i++){
 			h_score[i] = malloc(1000*sizeof(h_score));
@@ -1830,7 +1840,11 @@ void escreve_file_scores()
 	//Imprime a tabela no arquivo scores
 	FILE *file_score;
 	file_score = fopen("scores","w+");
-	
+	if (!file_score)
+	{
+		fprintf(stderr, "Não foi possível escrever scores...\n" );
+		exit(1);
+	}
 	for (int i = 0; i < cont_scores; i++)
 	{
 	 	fprintf(file_score,"%s %d",h_score[i] -> nome,h_score[i] -> score);
