@@ -1327,6 +1327,7 @@ void hit()
 					}
 					else
 						hero_ -> x = obstacles[i] -> x + obstacles[i] -> rw;
+					hero_ -> dx = 0;
 				}
 			}
 		}
