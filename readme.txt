@@ -1,5 +1,5 @@
 Esse jogo foi baseado no Super Mario Bros e possui muitas semelhanças.
-Movimentação do personagem travada usando KEY_DOWN, ou seja segurar teclas de movimentação não funciona.
+Movimentação do personagem travada usando KEY_DOWN, ou seja, segurar teclas de movimentação não funciona.
 O easter egg é ativado nessa circunstancia:
 	-Você deve ir até o ultimo estagio do jogo (5) onde tem uma casa
 	-Ao invés de ir até a casa e terminar o jogo você volta pra o primeiro estagio (0)
